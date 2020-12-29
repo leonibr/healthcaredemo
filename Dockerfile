@@ -30,4 +30,6 @@ COPY --from=publish /build-dir .
 
 FROM runtime as healthcare_demo
 WORKDIR /dist/Host
+ENV VIRTUAL_HOST healthcare.marques.top
+ENV LETSENCRYPT_HOST healthcare.marques.top
 ENTRYPOINT ["dotnet", "bin/Release/net5.0/publish/FusionDemo.HealthCentral.Host.dll"]

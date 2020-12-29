@@ -16,6 +16,8 @@ namespace FusionDemo.HealthCentral.Domain
 
         public int FreeBeds => HospitalBeds.Where(h => h.IsFree == true).Count();
 
+        public double OccupationRate => Math.Round( ((Capacity - FreeBeds) / (double)Capacity) * 100, 2);
+
         public ICollection<HospitalBed> HospitalBeds { get; set; }
     }
 }

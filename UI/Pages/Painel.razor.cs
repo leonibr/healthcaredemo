@@ -236,9 +236,9 @@ namespace FusionDemo.HealthCentral.UI.Pages
             State.CancelUpdateDelay();
         }
 
-        protected void AddToWaitingList()
+        protected async  Task AddToWaitingList()
         {
-            PatientService.AddPatientToWaitingList();
+            await PatientService.AddPatientToWaitingList();
         }
     }
 }

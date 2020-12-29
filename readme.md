@@ -27,8 +27,9 @@ docker-compose run --service-ports healthcare_demo
 ## Or check the screenshots:
 1. Home Screen
 ![homescreen.png](homescreen.png)
+![rate](ocuprate.png)
 
-1. Place patients dragging and droping
+1. Place patients by dragging and droping
 ![healthcare_centrarl.gif](healthcare_central.gif)
 
 #### Objective:

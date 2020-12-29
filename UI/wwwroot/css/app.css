@@ -19,10 +19,10 @@ body div.mud-main-content {
     font-family: Consolas, Verdana;
     font-size: 12px;
 }
-.loader-box progress {
-    height: 1rem;
 
-}
+    .loader-box progress {
+        height: 1rem;
+    }
 
 .selected-card {
     border: 2px solid blue;
@@ -36,9 +36,22 @@ body div.mud-main-content {
 
 .dragging-start {
     opacity: 0.3;
-
 }
 
 .dragging-enter {
-   border: 1px solid limegreen;
+    border: 1px solid limegreen;
+}
+
+.rate-green {
+    color: #46f418;
+    text-shadow: 1px 1px 1px #fff;
+    
+}
+
+.rate-orange {
+    color: #ff6a00;
+}
+
+.rate-red {
+    color: #fe2828;
 }

@@ -2,6 +2,8 @@ version: '2'
 services:
   healthcare_demo:
     restart: always
+    network_mode: 
+      "bridge"
     build: 
       context: .
       target: healthcare_demo

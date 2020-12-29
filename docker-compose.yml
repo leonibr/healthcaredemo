@@ -2,13 +2,13 @@ version: '2'
 services:
   healthcare_demo:
     restart: always
+    networks: 
+      health_net:
     build: 
       context: .
       target: healthcare_demo
     ports:
      - "5015:80"
-    expose: 
-     - "5015"
     environment:
       APP_URL: "healthcare.marques.top"
       LETSENCRYPT_HOST: "healthcare.marques.top"
@@ -16,4 +16,7 @@ services:
       ASPNETCORE_URLS: "http://0.0.0.0:80"
       ASPNETCORE_ENVIRONMENT: "Production"
 
+networks: 
+  health_net:
+    driver: bridge
 

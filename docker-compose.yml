@@ -1,0 +1,23 @@
+version: '3.4'
+services:
+  demo_debug:
+    build: 
+      context: .
+      target: demo_debug
+    ports:
+     - "5000:5000"
+    environment:
+      ASPNETCORE_URLS: "http://0.0.0.0:5000"
+      ASPNETCORE_ENVIRONMENT: "Development"
+  
+  healthcare_demo:
+    build: 
+      context: .
+      target: healthcare_demo
+    ports:
+     - "5005:80"
+    environment:
+      APP_URL: "healthcare.marques.top"
+      ASPNETCORE_URLS: "http://0.0.0.0:80"
+      ASPNETCORE_ENVIRONMENT: "Production"
+

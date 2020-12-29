@@ -1,0 +1,63 @@
+﻿@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+
+        <MudTextField Value="@patient.PatientId" Label="Patient Id" ReadOnly="true" />
+        <MudTextField Value="@patient.Name" Label="Patient Name" ReadOnly="true" />
+        <MudTextField Value="@patient.DOB" Label="Date of Birfth" ReadOnly="true" />
+        <MudGrid>
+            <MudItem sm="6">
+                <MudTextField Value="@SelectedCareUnit.Name" Label="Care Unit" ReadOnly="true" />              
+            </MudItem>
+            <MudItem sm="6">
+                <MudTextField Value="@($"Code: {SelectedBed.HospitalBedId}")" Label="Bed Code" ReadOnly="true" />      
+            </MudItem>
+
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" OnClick="DischargePatientAction" Disabled="@(SelectedBed == null || SelectedCareUnit == null )">Discharge Patient</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+        [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    private CareUnit SelectedCareUnit { get; set; }
+    private HospitalBed SelectedBed { get; set; }
+
+
+    [Parameter] public Patient patient { get; set; } = new Patient();
+    [Parameter] public IList<CareUnit> units { get; set; } = new List<CareUnit>();
+    [Parameter] public HospitalBed preSelectedBed { get; set; } = null!;
+
+    void Cancel() {
+        Snackbar.Add("Discharge canceled!");
+        MudDialog.Cancel();
+    }
+
+
+
+    protected override void OnInitialized()
+    {
+        if (preSelectedBed != null)
+        {
+            SelectedCareUnit = units.Where(c => c.HospitalBeds.Any(f =>  f.HospitalBedId == preSelectedBed.HospitalBedId)).FirstOrDefault();
+            SelectedBed = SelectedCareUnit
+                .HospitalBeds
+                .Where(b => b.HospitalBedId == preSelectedBed.HospitalBedId)
+                .FirstOrDefault();
+
+        }
+    }
+
+    private void DischargePatientAction()
+    {
+        var tuple = (patient.PatientId, SelectedCareUnit.CareUnitId, SelectedBed.HospitalBedId);
+
+
+        MudDialog.Close(DialogResult.Ok(tuple));
+
+    }
+}

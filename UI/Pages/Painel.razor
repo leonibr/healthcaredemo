@@ -1,0 +1,274 @@
+@page "/painel-sample"
+@using System.Threading
+
+@inherits PainelPage
+
+
+@{
+    var time = State.LastValue.ServerTime;
+    units = State.LastValue.AvailableUnits.ToList();
+    patients = State.LastValue.PatientsWaitingList.ToList(); ;
+    var error = State.Error;
+}
+<MudGrid>
+    <MudItem xs="12" sm="4">
+        <MudText Typo="Typo.h5" Class="pb-3">Server Time</MudText>
+
+        <StatefulComponentState Component="@this" />
+
+        @if (error != null)
+        {
+            <MudAlert Severity="Severity.Error">Update error: @error.Message</MudAlert>
+        }
+
+        <MudText Class="my-3">
+            Server Time: @time
+            <br />Refreshes every 5 seconds.
+        </MudText>
+
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" IconClass="@Icons.Material.Refresh"
+                   OnClick="@Refresh">Refresh All State</MudButton>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudText Typo="Typo.h5" Class="pb-3">Control Panel</MudText>
+
+
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Add"
+                   OnClick="@AddToWaitingList">Add Patient to Waiting List</MudButton>
+    </MudItem>
+</MudGrid>
+
+
+<MudGrid Spacing="4" Style="margin-top: 10px;">
+    <MudItem xs="12" sm="3">
+
+        @if (patients?.Count() > 0)
+        {
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">
+                            Patient waiting list
+                        </MudText>
+                        <MudSelect T="FilterByPatientOption" @bind-Value="@SelectedOrderBy" Label="Order By" Style="width: 50%;">
+                            <MudSelectItem Value="FilterByPatientOption.AgeDescending"><MudText Typo="Typo.caption">Age <MudIcon FontClass="fas fa-sort-numeric-down-alt"></MudIcon></MudText></MudSelectItem>
+                            <MudSelectItem Value="FilterByPatientOption.AgeAscending"><MudText Typo="Typo.caption">Age <MudIcon FontClass="fas fa-sort-numeric-down"></MudIcon></MudText></MudSelectItem>
+                            <MudSelectItem Value="FilterByPatientOption.ArrivalDescending"><MudText Typo="Typo.caption">Arrival <MudIcon FontClass="fas fa-sort-numeric-down-alt"></MudIcon></MudText></MudSelectItem>
+                            <MudSelectItem Value="FilterByPatientOption.ArrivalAscending"><MudText Typo="Typo.caption">Arrival <MudIcon FontClass="fas fa-sort-numeric-down"></MudIcon></MudText></MudSelectItem>
+                        </MudSelect>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+
+                    </CardHeaderActions>
+                </MudCardHeader>
+
+            </MudCard>
+            <div style="overflow-y: scroll; max-height: 450px; margin-top: 8px">
+
+                <Virtualize Context="p" Items="@FiltredPatientList" OverscanCount="5">
+                    <div ondragover="event.preventDefault();"
+                         ondragstart="event.dataTransfer.setData('', event.target.id);">
+                        <MudCard draggable="true"
+                                 Class="@(p.PatientId == DragPatient?.PatientId ? draggingCss : "")"
+                                 @ondragstart="@(() => HandleDragStart(p))" @ondragend="@HandleDragEnd">
+
+                            <MudCardHeader>
+                                <CardHeaderAvatar>
+                                    <MudAvatar Color="Color.Primary">@p.Name.Substring(0, 1).ToUpperInvariant()</MudAvatar>
+                                </CardHeaderAvatar>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.body1">@p.Name,@(showGender(p.Gender))</MudText>
+                                    <MudText Typo="Typo.body2">Age: @(formatAge(p.Age))</MudText>
+                                    <MudText Typo="Typo.body2">Waiting for @(formatTimeInLine(p.TimeInLine))</MudText>
+
+                                </CardHeaderContent>
+                                <CardHeaderActions>
+                                    <MudIconButton Icon="@Icons.Material.Settings" Color="Color.Default" OnClick="@(() => PutPatient(p))" />
+                                </CardHeaderActions>
+                            </MudCardHeader>
+
+
+
+                        </MudCard>
+                    </div>
+                    <div style="margin-top:12px" />
+                </Virtualize>
+            </div>
+
+
+
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Success">
+                No Patients on waitiling list!
+            </MudAlert>
+        }
+
+    </MudItem>
+
+
+
+    <MudItem xs="12" sm="3">
+        @if (units.Count() > 0)
+        {
+
+            <Virtualize Context="u" Items="@units">
+                <MudCard Class="@(SelectedCareUnit?.CareUnitId == u.CareUnitId ? "selected-card" : "")">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Color="@(u.FreeBeds == 0 ? Color.Error : Color.Success)">
+                                <MudIcon FontClass="fas fa-hospital-alt"></MudIcon>
+                            </MudAvatar>
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h5">@u.Name</MudText>
+                        </CardHeaderContent>
+
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Typo="Typo.body2">Free Beds: @u.FreeBeds.</MudText>
+                        <MudText Typo="Typo.body2">Total Capacity: @u.Capacity.</MudText>
+
+
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="@(() => SelectUnit(u))">
+                            @if (SelectedCareUnit?.CareUnitId == u.CareUnitId)
+                            {
+                                @("Unselect")
+                            }
+                            else
+                            {
+                                @("select")
+                            }
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+                <div style="margin-top: 12px"></div>
+            </Virtualize>
+        }
+        else
+        {
+
+            <MudAlert Severity="Severity.Warning" Elevation="2">
+                No units available
+            </MudAlert>
+        }
+
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        @if (SelectedCareUnit == null)
+        {
+            <MudAlert Severity="Severity.Warning" Elevation="2">
+                No unit selected
+            </MudAlert>
+        }
+        else
+        {
+
+            <MudGrid>
+                <MudItem sm="12">
+                    <MudPaper Class="pa-5">
+                        <MudGrid>
+                            <MudItem sm="6">
+                                <MudText Typo="Typo.h6">@SelectedCareUnit.Name</MudText>
+                            </MudItem>
+                            <MudItem sm="6">
+                                <MudChart ChartType="ChartType.Pie" InputData="@(new double[] { SelectedCareUnit.FreeBeds, SelectedCareUnit.Capacity - SelectedCareUnit.FreeBeds })" InputLabels="@labels" Width="100px" Height="100px" />
+
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+                </MudItem>
+                @{
+                    var colCount = int.Parse(Math.Ceiling(SelectedCareUnit.HospitalBeds.Count() / 2.0).ToString());
+                    var leftColumn = SelectedCareUnit.HospitalBeds.Take(colCount).ToList();
+                    var righColumn = SelectedCareUnit.HospitalBeds.Skip(colCount).ToList();
+                }
+
+                <MudItem sm="6">
+                    <Virtualize Context="bed" Items="leftColumn">
+                        @showBed(bed)
+                    </Virtualize>
+                </MudItem>
+
+                <MudItem sm="6">
+                    <Virtualize Context="bed" Items="righColumn">
+                        @showBed(bed)
+                    </Virtualize>
+                </MudItem>
+            </MudGrid>
+
+        }
+    </MudItem>
+</MudGrid>
+
+
+
+@code {
+
+
+    protected RenderFragment showBed(HospitalBed bed)
+    {
+        var patient = bed.Patient;
+        var isEmptyBed = patient == null;
+        var color = isEmptyBed ? Color.Success : Color.Error;
+
+
+        return (@<div ondragover="event.preventDefault()"
+                      @ondrop="(async e => await HandleDrop(bed))">
+        <MudCard Class="mb-3">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudAvatar Size="Size.Small" Color="@color">
+                        <MudIcon Icon="@Icons.Material.SingleBed" />
+                    </MudAvatar>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.caption">Code: @bed.HospitalBedId</MudText>
+                    @if (isEmptyBed)
+                    {
+                        <MudText Typo="Typo.h4">Available!</MudText>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2">@(patient.Name), @(formatAge(patient.Age)), @(showGender(patient.Gender))</MudText>
+                        <MudText Typo="Typo.body2">In bed for @(formatTimeInLine(bed.OccupationDuration))</MudText>
+                    }
+
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    @if (!isEmptyBed)
+                    {
+                        <MudTooltip Text="@($"Discharge {patient.Name}")" Placement="Placement.Top">
+                            
+                        <MudIconButton Icon="@Icons.Material.RemoveCircle" Color="Color.Default" OnClick="(() => DischargePatient(patient, bed))" />
+                        </MudTooltip>
+                    }
+                </CardHeaderActions>
+
+            </MudCardHeader>
+        </MudCard>
+    </div>);
+}
+
+
+protected RenderFragment showGender(GenderType genderType)
+{
+  if (genderType == GenderType.Male)
+  {
+      return (@<MudIcon FontClass="fas fa-male" Size="Size.Small" />);
+}
+if (genderType == GenderType.Female)
+{
+return (@<MudIcon FontClass="fas fa-female" Size="Size.Small" />);
+}
+return (@<MudIcon FontClass="fas fa-question" />);
+}
+
+
+
+}

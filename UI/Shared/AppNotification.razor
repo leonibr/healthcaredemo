@@ -1,0 +1,47 @@
+﻿@inherits LiveComponentBase<Domain.AppNotification>
+@inject ISnackbar Snackbar
+@inject INotificationService NotificationService
+
+
+@code {
+    protected Domain.AppNotification CurrentNotificaion { get; set; } = new Domain.AppNotification();
+
+
+    protected override void OnInitialized()
+    {
+        StateHasChangedTriggers = StateEventKind.All;
+        base.OnInitialized();
+    }
+
+    protected override void ConfigureState(LiveState<Domain.AppNotification>.Options options)
+    {
+        options.WithUpdateDelayer(.5);
+
+
+    }
+
+    protected override async Task<Domain.AppNotification> ComputeStateAsync(System.Threading.CancellationToken cancellationToken)
+    {
+        var notification = await NotificationService.GetNotification(cancellationToken);
+        if (CurrentNotificaion != null && notification != null)
+        {
+
+            if (notification.AppNotificationId != CurrentNotificaion.AppNotificationId)
+            {
+                CurrentNotificaion = notification;
+                if (CurrentNotificaion.Messages.Count() > 0)
+                {
+                    foreach (var msg in CurrentNotificaion.Messages)
+                    {
+                        Snackbar.Add(msg, Severity.Normal, (c) => { c.ShowCloseIcon = true; });
+                    }
+                }
+            }
+        }
+        return notification;
+    }
+
+
+
+
+}

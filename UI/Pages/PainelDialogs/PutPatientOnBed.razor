@@ -1,0 +1,87 @@
+﻿@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+
+        <MudTextField Value="@patient.PatientId" Label="Patient Id" ReadOnly="true" />
+        <MudTextField Value="@patient.Name" Label="Patient Name" ReadOnly="true" />
+        <MudTextField Value="@patient.DOB" Label="Date of Birfth" ReadOnly="true" />
+        <MudGrid>
+            <MudItem sm="6">
+                <MudSelect Label="Select Care Unit" @bind-Value="SelectedCareUnit" HelperText="Available Care Units">
+                    @foreach (var unit in units)
+                    {
+                        <MudSelectItem Value="@unit">@unit.Name (@unit.FreeBeds/@unit.Capacity)</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="6">
+                @if (SelectedCareUnit == null)
+                {
+                    <MudAlert Severity="Severity.Warning">Select a Care Unit first.</MudAlert>
+                }
+                else
+                {
+                    var beds = SelectedCareUnit.HospitalBeds.Where(b => b.IsFree).ToList();
+                    if (beds.Count == 0)
+                    {
+
+                        <MudAlert Severity="Severity.Warning">There is no bed available, see other Care Unit.</MudAlert>
+
+                    }
+                    else
+                    {
+                        <MudSelect Label="Select Care Unit" @bind-Value="SelectedBed" HelperText="Available Hospital Beds">
+                            @foreach (var bed in beds)
+                            {
+                                <MudSelectItem Value="@bed" >Bed Cod: @bed.HospitalBedId</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                }
+            </MudItem>
+
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Success" OnClick="PutPatient" Disabled="@(SelectedBed == null || SelectedCareUnit == null )">Put Patient</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    private CareUnit SelectedCareUnit { get; set; }
+    private HospitalBed SelectedBed { get; set; }
+
+
+    [Parameter] public Patient patient { get; set; } = new Patient();
+    [Parameter] public IList<CareUnit> units { get; set; } = new List<CareUnit>();
+    [Parameter] public HospitalBed preSelectedBed { get; set; } = null!;
+
+    void Cancel() => MudDialog.Cancel();
+
+
+
+    protected override void OnInitialized()
+    {
+        if (preSelectedBed != null)
+        {
+            SelectedCareUnit = units.Where(c => c.HospitalBeds.Any(f =>  f.HospitalBedId == preSelectedBed.HospitalBedId)).FirstOrDefault();
+            SelectedBed = SelectedCareUnit
+                .HospitalBeds
+                .Where(b => b.IsFree && b.HospitalBedId == preSelectedBed.HospitalBedId)
+                .FirstOrDefault();
+
+        }
+    }
+
+    private async Task PutPatient()
+    {
+        var tuple = (patient.PatientId, SelectedCareUnit.CareUnitId, SelectedBed.HospitalBedId);
+
+        Snackbar.Add("Putting patient on bed", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(tuple));
+
+    }
+}

@@ -1,0 +1,22 @@
+﻿@page "/"
+@inject NavigationManager Navigator
+
+<MudText Typo="Typo.h4" Class="pb-3">FusionDemo HealthCare Central</MudText>
+<MudText Typo="Typo.h6" Class="pb-1">Start by open multiple windows and see all being updated accordingly</MudText>
+
+<MudText>Objective: simulate realtime administration of hospitals bed using Fusion library patterns</MudText>
+<MudText>Scenario:</MudText>
+<MudList>
+    <MudListItem Icon="@Icons.Material.Star">Operators can place or remove patients on hospital beds</MudListItem>
+    <MudListItem Icon="@Icons.Material.Star">Operators do not register patients to waiting list, to simulate new patient to the list click: "Add Patient.." </MudListItem>
+    <MudListItem Icon="@Icons.Material.Star">Operators get data pdated every 5 seconds or when invalidated by other operator</MudListItem>
+    
+    <MudListItem Icon="@Icons.Material.Star">Modify whatever you like!</MudListItem>
+</MudList>
+
+<MudText>
+    <MudChip Color="Color.Success">Note</MudChip>
+    <MudLink Href="/swagger" Target="_blank">Swagger API browser</MudLink> is already bundled.
+</MudText>
+
+<MudText Typo="Typo.subtitle1">Go to <NavLink href="painel-sample">Manager Page</NavLink></MudText>

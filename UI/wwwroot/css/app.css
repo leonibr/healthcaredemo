@@ -1,0 +1,44 @@
+﻿
+body div.mud-main-content {
+    padding-top: 86px;
+    padding-bottom: 64px;
+}
+
+@media (min-width: 960px) {
+    body div.mud-main-content {
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+}
+
+.loader-box {
+    width: 500px;
+    height: 120px;
+    margin: 100px auto;
+    text-align: center;
+    font-family: Consolas, Verdana;
+    font-size: 12px;
+}
+.loader-box progress {
+    height: 1rem;
+
+}
+
+.selected-card {
+    border: 2px solid blue;
+}
+
+.dragging {
+    cursor: grabbing;
+    background-color: limegreen;
+}
+
+
+.dragging-start {
+    opacity: 0.3;
+
+}
+
+.dragging-enter {
+   border: 1px solid limegreen;
+}

@@ -2,8 +2,6 @@ version: '2'
 services:
   healthcare_demo:
     restart: always
-    networks: 
-      health_net:
     build: 
       context: .
       target: healthcare_demo
@@ -13,10 +11,8 @@ services:
       APP_URL: "healthcare.marques.top"
       LETSENCRYPT_HOST: "healthcare.marques.top"
       VIRTUAL_HOST: "healthcare.marques.top"
-      ASPNETCORE_URLS: "http://0.0.0.0:80"
+      ASPNETCORE_URLS: "http://+:80"
       ASPNETCORE_ENVIRONMENT: "Production"
 
-networks: 
-  health_net:
-    driver: bridge
+
 

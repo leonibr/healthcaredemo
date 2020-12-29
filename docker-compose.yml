@@ -1,6 +1,7 @@
 version: '2'
 services:
   healthcare_demo:
+    restart: always
     build: 
       context: .
       target: healthcare_demo
@@ -8,6 +9,8 @@ services:
      - "5015:80"
     environment:
       APP_URL: "healthcare.marques.top"
+      LETSENCRYPT_HOST: "healthcare.marques.top"
+      VIRTUAL_HOST: "healthcare.marques.top"
       ASPNETCORE_URLS: "http://0.0.0.0:80"
       ASPNETCORE_ENVIRONMENT: "Production"
 

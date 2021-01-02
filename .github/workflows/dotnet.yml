@@ -26,16 +26,7 @@ jobs:
         username: ${{ secrets.HEALTHCARE_REGISTRY_USERNAME }}
         password: ${{ secrets.HEALTHCARE_REGISTRY_PASSWORD }}
     - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.101
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore -c Release
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+
     -
       name: Build 
       uses: docker/build-push-action@v2
@@ -44,5 +35,5 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-            ${{ secrets.HEALTHCARE_REGISTRY_USERNAME }}/healthcare_demo:latest
+            marquesn/healthcare_demo:latest
   

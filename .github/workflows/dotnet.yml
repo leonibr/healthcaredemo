@@ -1,0 +1,39 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    -
+      name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    -
+      name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    -
+      name: Login to Canister Container Registry
+      uses: docker/login-action@v1 
+      with:
+        registry: cloud.canister.io:5000
+        username: ${{ secrets.HEALTHCARE_REGISTRY_USERNAME }}
+        password: ${{ secrets.HEALTHCARE_REGISTRY_PASSWORD }}
+    - uses: actions/checkout@v2
+
+    -
+      name: Build 
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: |
+            cloud.canister.io:5000/marquesn/healthcare_demo:latest
+  

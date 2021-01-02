@@ -35,5 +35,5 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-            marquesn/healthcare_demo:latest
+            cloud.canister.io:5000/marquesn/healthcare_demo:latest
   

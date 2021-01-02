@@ -44,5 +44,5 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-            ${{ secrets.HEALTHCARE_REGISTRY_USERNAME }}/healthcaredemo:latest
+            ${{ secrets.HEALTHCARE_REGISTRY_USERNAME }}/healthcare_demo:latest
   

@@ -3,7 +3,8 @@ WORKDIR /build-dir
 COPY [".",  "." ]
 RUN dotnet build -c:Debug
 RUN dotnet build -c:Release --no-restore
-
+RUN sudo apt-get install curl /
+    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
 
 

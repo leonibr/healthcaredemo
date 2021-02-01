@@ -173,8 +173,8 @@
     {
         if (sessionId == Session.Id)
             SignOut();
-        else
-            Task.Run(() => AuthService.SignOutAsync(true, new Session(sessionId))).Ignore();
+        //else
+          //  Task.Run(() => AuthService.SignOutAsync(true, new Session(sessionId))).Ignore();
     }
 
     private void SignOutEverywhere()

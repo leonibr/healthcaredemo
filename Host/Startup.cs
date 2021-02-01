@@ -70,13 +70,13 @@ namespace FusionDemo.HealthCentral.Host
             });
             services.AddSingleton(new PresenceService.Options() { UpdatePeriod = TimeSpan.FromMinutes(1) });
             var fusion = services.AddFusion();
-            var fusionServer = fusion.AddWebSocketServer();
+            var fusionServer = fusion.AddWebServer();
             var fusionClient = fusion.AddRestEaseClient();
             var fusionAuth = fusion.AddAuthentication().AddServer();
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
-            services.AttributeScanner()
+            services.UseAttributeScanner()
                 .AddServicesFrom(typeof(TimeService).Assembly)
                 .AddServicesFrom(Assembly.GetExecutingAssembly());
             // Registering shared services from the client

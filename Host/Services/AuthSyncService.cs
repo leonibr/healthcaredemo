@@ -28,15 +28,15 @@ namespace FusionDemo.HealthCentral.Host.Services
 
             var authenticationType = principal.Identity?.AuthenticationType ?? "";
             if (authenticationType == "") {
-                await AuthService.SignOutAsync(false, session, cancellationToken).ConfigureAwait(false);
+               // await AuthService.SignOutAsync(false, session, cancellationToken).ConfigureAwait(false);
             }
             else {
-                var id = principal.Identity?.Name ?? "";
-                var claims = principal.Claims.ToDictionary(c => c.Type, c => c.Value);
-                var name = claims.GetValueOrDefault(GitHubAuthenticationConstants.Claims.Name) ?? "";
-                user = new User(authenticationType, id, name, claims);
-                await AuthService.SignInAsync(user, session, cancellationToken).ConfigureAwait(false);
-                await AuthService.SaveSessionInfoAsync(sessionInfo, session, cancellationToken).ConfigureAwait(false);
+                // var id = principal.Identity?.Name ?? "";
+                // var claims = principal.Claims.ToDictionary(c => c.Type, c => c.Value);
+                // var name = claims.GetValueOrDefault(GitHubAuthenticationConstants.Claims.Name) ?? "";
+                // user = new User(authenticationType, id, name, claims);
+                // await AuthService.SignInAsync(user, session, cancellationToken).ConfigureAwait(false);
+                // await AuthService.SaveSessionInfoAsync(sessionInfo, session, cancellationToken).ConfigureAwait(false);
             }
         }
     }

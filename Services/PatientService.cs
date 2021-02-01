@@ -2,6 +2,7 @@
 using FusionDemo.HealthCentral.Abstractions;
 using FusionDemo.HealthCentral.Domain;
 using Stl.Fusion;
+using Stl.Async;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -171,7 +172,8 @@ namespace FusionDemo.HealthCentral.Services
 
 
             waitingList.TryAdd(patient.PatientId, patient);
-            Computed.Invalidate(() => GetPatientWaitingList());
+            using (Computed.Invalidate())
+                GetPatientWaitingList();
             notificationService.AddNotification($"New Patient to waiting list\n{patient.Name}");
             return Task.CompletedTask;
 
@@ -191,12 +193,14 @@ namespace FusionDemo.HealthCentral.Services
                     bed.Patient = patient;
                     bed.OccupiedSince = DateTime.Now;
 
-                    Computed.Invalidate(() => GetAvailableUnits(cancellationToken));
+                    using (Computed.Invalidate())
+                        GetAvailableUnits(cancellationToken).Ignore();
 
                     var removed = waitingList.TryRemove(patient.PatientId, out Patient removedPatient);
                     if (removed)
                     {
-                        Computed.Invalidate(() => GetPatientWaitingList(cancellationToken));
+                        using (Computed.Invalidate())
+                            GetPatientWaitingList(cancellationToken).Ignore();
                     }
                     return Task.FromResult(removed);
                 }
@@ -226,7 +230,8 @@ namespace FusionDemo.HealthCentral.Services
                 bed.Patient = null!;
                 bed.OccupiedSince = null!;
 
-                Computed.Invalidate(() => GetAvailableUnits(cancellationToken));
+                using (Computed.Invalidate())
+                    GetAvailableUnits(cancellationToken).Ignore();
 
 
                 return Task.FromResult(true);

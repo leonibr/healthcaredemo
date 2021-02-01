@@ -11,6 +11,7 @@ namespace FusionDemo.HealthCentral.Services
     using System.Collections.Concurrent;
     using Stl.Fusion;
     using System.Threading;
+    using Stl.Async;
 
     [ComputeService(typeof(INotificationService))]
     public class NotificationService : INotificationService
@@ -35,7 +36,8 @@ namespace FusionDemo.HealthCentral.Services
             var appNot = AppNotification.Create();
             appNot.AddMessage(message);
             queue.Enqueue(appNot);
-            Computed.Invalidate(() => GetNotification());
+            using (Computed.Invalidate())
+                GetNotification().Ignore();
             return Task.CompletedTask;
         }
     }

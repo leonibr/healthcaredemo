@@ -1,3 +1,4 @@
+@using Stl.Text
 <CascadingAuthState SessionId="@SessionId">
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
@@ -13,5 +14,5 @@
 
 @code {
     [Parameter]
-    public string SessionId { get; set; } = "";
+    public Symbol SessionId { get; set; } = Symbol.Empty;
 }

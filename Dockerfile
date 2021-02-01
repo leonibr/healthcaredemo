@@ -1,7 +1,14 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine as build
 WORKDIR /build-dir
-COPY [".",  "." ]
-RUN dotnet build -c:Debug
+ADD Host/Host.csproj Host/Host.csproj
+ADD UI/UI.csproj UI/UI.csproj
+ADD Domain/Domain.csproj Domain/Domain.csproj
+ADD Abstractions/Abstractions.csproj Abstractions/Abstractions.csproj
+ADD Services/Services.csproj Services/Services.csproj
+ADD FusionDemo.sln .
+RUN dotnet restore
+ADD . ./
+RUN dotnet build -c:Debug --no-restore
 RUN dotnet build -c:Release --no-restore
 
 
@@ -23,13 +30,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine as runtime
 #RUN apk add icu-libs libx11-dev
 #RUN apk add libgdiplus-dev \
 #  --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
-# ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+#ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 WORKDIR /dist
-COPY --from=publish /build-dir .
+COPY --from=publish /build-dir/Host/bin/Release/net5.0/publish .
 
 
 FROM runtime as healthcare_demo
-WORKDIR /dist/Host
+WORKDIR /dist
 ENV VIRTUAL_HOST healthcare.marques.top
 ENV LETSENCRYPT_HOST healthcare.marques.top
-ENTRYPOINT ["dotnet", "bin/Release/net5.0/publish/FusionDemo.HealthCentral.Host.dll"]
+ENTRYPOINT ["dotnet", "FusionDemo.HealthCentral.Host.dll"]

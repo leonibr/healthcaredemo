@@ -135,7 +135,9 @@
             <MudText Typo="Typo.body2">
                 Order by Number of free beds descending.
             </MudText>
-            <Virtualize Context="u" Items="@units">
+            @foreach (var u in units){
+
+           
                 <MudCard Class="@(SelectedCareUnit?.CareUnitId == u.CareUnitId ? "selected-card" : "")">
                     <MudCardHeader>
                         <CardHeaderAvatar>
@@ -166,7 +168,7 @@
                     </MudCardActions>
                 </MudCard>
                 <div style="margin-top: 12px"></div>
-            </Virtualize>
+             }
         }
         else
             {
@@ -239,15 +241,17 @@
                 }
 
                 <MudItem xs="12" sm="6">
-                    <Virtualize Context="bed" Items="leftColumn">
-                        @showBed(bed)
-                    </Virtualize>
+                        @foreach (var bed in leftColumn)
+                        {
+                            @showBed(bed)                            
+                        }
                 </MudItem>
 
                 <MudItem xs="12" sm="6">
-                    <Virtualize Context="bed" Items="righColumn">
-                        @showBed(bed)
-                    </Virtualize>
+                     @foreach (var bed in righColumn)
+                        {
+                            @showBed(bed)                            
+                        }
                 </MudItem>
             </MudGrid>
 
@@ -258,7 +262,7 @@
 
 
 @code {
-
+  Stopwatch sp = new Stopwatch();
 
                 protected RenderFragment showBed(HospitalBed bed)
                 {
@@ -318,6 +322,17 @@ return (@<MudIcon FontClass="fas fa-female" Size="Size.Small" />);
 return (@<MudIcon FontClass="fas fa-question" />);
 }
 
+    protected override bool ShouldRender()
+    {
+        sp.Restart();
+    return base.ShouldRender();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+        {
+            Console.WriteLine($"Rendered {sp.Elapsed.TotalMilliseconds:0.00} ms");
+            base.OnAfterRender(firstRender);
+        }
 
 
 }

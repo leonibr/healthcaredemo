@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 using MudBlazor.Dialog;
+using Newtonsoft.Json;
 using Stl.Fusion;
 using Stl.Fusion.Authentication;
 using Stl.Fusion.Blazor;
@@ -22,7 +23,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
         [Inject] IPatientService PatientService { get; set; }
         [Inject] ISnackbar Snackbar { get; set; }
         [Inject] ILogger<Painel> Logger { get; set; }
-        [Inject] Session Session { get; set; }
+ 
         [Inject] IDialogService Dialog { get; set; }
         protected string draggingCss { get; set; } = "";
         protected Patient DragPatient { get; set; } = null!;
@@ -138,7 +139,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
         protected void SelectUnit(CareUnit unit)
         {
 
-            if (SelectedCareUnit != null && SelectedCareUnit?.CareUnitId == unit.CareUnitId)
+            if (SelectedCareUnit != null && unit != null && SelectedCareUnit?.CareUnitId == unit.CareUnitId)
             {
                 SelectedCareUnit = null!;
             }
@@ -155,7 +156,8 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
         {
             var parameter = "PainelSample-";
-            var composedValue = await PainelComposerService.GetComposedValueAsync(parameter, Session, cancellationToken);
+            var composedValue = await PainelComposerService.GetComposedValueAsync(parameter, cancellationToken);
+            Console.WriteLine("ComputeStateAsync " + JsonConvert.SerializeObject(composedValue));
             if (SelectedCareUnit != null)
             {
                 SelectedCareUnit = composedValue.AvailableUnits.Where(c => c.CareUnitId == SelectedCareUnit.CareUnitId).FirstOrDefault()!;

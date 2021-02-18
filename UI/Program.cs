@@ -15,6 +15,7 @@ using Stl.OS;
 using Stl.DependencyInjection;
 using Stl.Fusion.Blazor;
 using FusionDemo.HealthCentral.Abstractions;
+using Stl.Fusion.Bridge;
 
 namespace FusionDemo.HealthCentral.UI
 {
@@ -61,7 +62,7 @@ namespace FusionDemo.HealthCentral.UI
                     o.HttpClientActions.Add(client => client.BaseAddress = clientBaseUri);
                    
                 });
-            var fusionAuth = fusion.AddAuthentication().AddRestEaseClient().AddBlazor();
+           // var fusionAuth = fusion.AddAuthentication().AddRestEaseClient().AddBlazor();
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
@@ -72,9 +73,8 @@ namespace FusionDemo.HealthCentral.UI
 
         public static void ConfigureSharedServices(IServiceCollection services)
         {
-            services.AddMudBlazorDialog();
-            services.AddMudBlazorSnackbar();
-            services.AddMudBlazorResizeListener();
+
+            services.AddMudServices();
             // Default delay for update delayers
             services.AddSingleton(c => new UpdateDelayer.Options() {
                 Delay = TimeSpan.FromSeconds(0.1),

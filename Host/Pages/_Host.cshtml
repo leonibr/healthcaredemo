@@ -6,20 +6,9 @@
 @using Stl.Async
 @using Stl.Fusion.Authentication
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@inject AuthSyncService AuthSyncService
-@inject ISessionResolver SessionResolver
+
 @{
-    var authSyncService = AuthSyncService;
-    var principal = HttpContext.User;
-    var session = SessionResolver.Session;
-    var now = DateTime.UtcNow;
-    var sessionInfo = new SessionInfo(session.Id) {
-        CreatedAt = now,
-        LastSeenAt = now,
-        IPAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "",
-        UserAgent = Request.Headers["User-Agent"].ToString() ?? "",
-    };
-    Task.Run(() => authSyncService.SyncAsync(principal, sessionInfo, session)).Ignore();
+
 
     Layout = null;
     var isServerSideBlazor = BlazorModeController.IsServerSideBlazor(HttpContext);
@@ -40,8 +29,8 @@
     <link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 
-    <script src="_content/Stl.Fusion.Blazor/scripts/fusionAuth.js"></script>
-    <script>window.FusionAuth.sessionId = "@session.Id";</script>
+    @*<script src="_content/Stl.Fusion.Blazor/scripts/fusionAuth.js"></script>
+        <script>window.FusionAuth.sessionId = "@session.Id";</script>*@
 </head>
 <body>
 @if (mustClose) {
@@ -77,7 +66,7 @@
 } else {
     <app>
         @* <component type="typeof(App)" render-mode="ServerPrerendered"/> *@
-        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered, new { SessionId = session.Id }))
+        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
     </app>
 
     <div id="blazor-error-ui">

@@ -52,7 +52,6 @@ namespace FusionDemo.HealthCentral.UI.Services
         [Get("get")]
         Task<PainelComposedValue> GetComposedValueAsync(
             string? parameter,
-            Session session,
             CancellationToken cancellationToken = default);
     }
 

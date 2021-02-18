@@ -11,33 +11,33 @@ using Stl.Fusion.Authentication;
 
 namespace FusionDemo.HealthCentral.Host.Services
 {
-    [Service]
-    public class AuthSyncService
-    {
-        private IServerSideAuthService AuthService { get; }
+    //[Service]
+    //public class AuthSyncService
+    //{
+    //    private IServerSideAuthService AuthService { get; }
 
-        public AuthSyncService(IServerSideAuthService authService)
-            => AuthService = authService;
+    //    public AuthSyncService(IServerSideAuthService authService)
+    //        => AuthService = authService;
 
-        public async Task SyncAsync(ClaimsPrincipal principal, SessionInfo sessionInfo, Session session,
-            CancellationToken cancellationToken = default)
-        {
-            var user = await AuthService.GetUserAsync(session, cancellationToken).ConfigureAwait(false);
-            if (((IPrincipal) user).Identity?.Name == principal.Identity?.Name)
-                return;
+    //    public async Task SyncAsync(ClaimsPrincipal principal, SessionInfo sessionInfo, Session session,
+    //        CancellationToken cancellationToken = default)
+    //    {
+    //        var user = await AuthService.GetUserAsync(session, cancellationToken).ConfigureAwait(false);
+    //        if (((IPrincipal) user).Identity?.Name == principal.Identity?.Name)
+    //            return;
 
-            var authenticationType = principal.Identity?.AuthenticationType ?? "";
-            if (authenticationType == "") {
-               // await AuthService.SignOutAsync(false, session, cancellationToken).ConfigureAwait(false);
-            }
-            else {
-                // var id = principal.Identity?.Name ?? "";
-                // var claims = principal.Claims.ToDictionary(c => c.Type, c => c.Value);
-                // var name = claims.GetValueOrDefault(GitHubAuthenticationConstants.Claims.Name) ?? "";
-                // user = new User(authenticationType, id, name, claims);
-                // await AuthService.SignInAsync(user, session, cancellationToken).ConfigureAwait(false);
-                // await AuthService.SaveSessionInfoAsync(sessionInfo, session, cancellationToken).ConfigureAwait(false);
-            }
-        }
-    }
+    //        var authenticationType = principal.Identity?.AuthenticationType ?? "";
+    //        if (authenticationType == "") {
+    //           // await AuthService.SignOutAsync(false, session, cancellationToken).ConfigureAwait(false);
+    //        }
+    //        else {
+    //            // var id = principal.Identity?.Name ?? "";
+    //            // var claims = principal.Claims.ToDictionary(c => c.Type, c => c.Value);
+    //            // var name = claims.GetValueOrDefault(GitHubAuthenticationConstants.Claims.Name) ?? "";
+    //            // user = new User(authenticationType, id, name, claims);
+    //            // await AuthService.SignInAsync(user, session, cancellationToken).ConfigureAwait(false);
+    //            // await AuthService.SaveSessionInfoAsync(sessionInfo, session, cancellationToken).ConfigureAwait(false);
+    //        }
+    //    }
+    //}
 }

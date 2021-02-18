@@ -19,6 +19,7 @@
         @if (error != null)
         {
             <MudAlert Severity="Severity.Error">Update error: @error.Message</MudAlert>
+            <p>@error.StackTrace</p>
         }
 
         <MudText Class="my-3">
@@ -26,14 +27,14 @@
             <br />Refreshes every 5 seconds.
         </MudText>
 
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" IconClass="@Icons.Material.Refresh"
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" IconClass="@Icons.Material.Outlined.Refresh"
                    OnClick="@Refresh">Refresh All State</MudButton>
     </MudItem>
     <MudItem xs="12" sm="4">
         <MudText Typo="Typo.h5" Class="pb-3">Control Panel</MudText>
         <MudText Typo="Typo.body1">Click to add fake Patient to Waiting list</MudText>
 
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Add"
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Add"
                    OnClick="@AddToWaitingList">Add Patient to Waiting List</MudButton>
     </MudItem>
     <MudItem xs="12" sm="4">
@@ -103,7 +104,7 @@
 
                                 </CardHeaderContent>
                                 <CardHeaderActions>
-                                    <MudIconButton Icon="@Icons.Material.Settings" Color="Color.Default" OnClick="@(() => PutPatient(p))" />
+                                    <MudIconButton Icon="@Icons.Material.Outlined.Settings" Color="Color.Default" OnClick="@(() => PutPatient(p))" />
                                 </CardHeaderActions>
                             </MudCardHeader>
 
@@ -277,7 +278,7 @@
             <MudCardHeader>
                 <CardHeaderAvatar>
                     <MudAvatar Size="Size.Small" Color="@color">
-                        <MudIcon Icon="@Icons.Material.SingleBed" />
+                        <MudIcon Icon="@Icons.Material.Outlined.RemoveCircle" />
                     </MudAvatar>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
@@ -298,7 +299,7 @@
                     {
                         <MudTooltip Text="@($"Discharge {patient.Name}")" Placement="Placement.Top">
                             
-                        <MudIconButton Icon="@Icons.Material.RemoveCircle" Color="Color.Default" OnClick="(() => DischargePatient(patient, bed))" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.RemoveCircle" Color="Color.Default" OnClick="(() => DischargePatient(patient, bed))" />
                         </MudTooltip>
                     }
                 </CardHeaderActions>

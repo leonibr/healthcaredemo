@@ -21,10 +21,10 @@ namespace FusionDemo.HealthCentral.Host.Controllers
 
 
         [HttpGet("get"), Publish]
-        public Task<PainelComposedValue> GetComposedValueAsync(string parameter, Session session, CancellationToken cancellationToken = default)
+        public Task<PainelComposedValue> GetComposedValueAsync(string parameter,  CancellationToken cancellationToken = default)
         {
             parameter ??= "";
-            return _composer.GetComposedValueAsync(parameter, session, cancellationToken);
+            return _composer.GetComposedValueAsync(parameter, cancellationToken);
         }
 
     }

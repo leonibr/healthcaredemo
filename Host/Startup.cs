@@ -72,7 +72,7 @@ namespace FusionDemo.HealthCentral.Host
             var fusion = services.AddFusion();
             var fusionServer = fusion.AddWebServer();
             var fusionClient = fusion.AddRestEaseClient();
-            var fusionAuth = fusion.AddAuthentication().AddServer();
+           //  var fusionAuth = fusion.AddAuthentication().AddServer();
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
@@ -82,30 +82,30 @@ namespace FusionDemo.HealthCentral.Host
             // Registering shared services from the client
             UI.Program.ConfigureSharedServices(services);
 
-            services.AddAuthentication(options => {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            }).AddCookie(options => {
-                options.LoginPath = "/signin";
-                options.LogoutPath = "/signout";
-            }).AddGitHub(options => {
-                options.Scope.Add("read:user");
-                // options.Scope.Add("user:email");
-                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-            });
+            //services.AddAuthentication(options => {
+            //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //}).AddCookie(options => {
+            //    options.LoginPath = "/signin";
+            //    options.LogoutPath = "/signout";
+            //}).AddGitHub(options => {
+            //    options.Scope.Add("read:user");
+            //    // options.Scope.Add("user:email");
+            //    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+            //});
             // We want to get ClientId and ClientSecret from ServerSettings,
             // and they're available only when IServiceProvider is already created,
             // that's why this overload of Configure<TOptions> is used here.
-            services.Configure<GitHubAuthenticationOptions>((c, name, options) => {
-                var serverSettings = c.GetRequiredService<ServerSettings>();
-                options.ClientId = serverSettings.GitHubClientId;
-                options.ClientSecret = serverSettings.GitHubClientSecret;
-            });
+            //services.Configure<GitHubAuthenticationOptions>((c, name, options) => {
+            //    var serverSettings = c.GetRequiredService<ServerSettings>();
+            //    options.ClientId = serverSettings.GitHubClientId;
+            //    options.ClientSecret = serverSettings.GitHubClientSecret;
+            //});
 
             // Web
             services.AddRouting();
             services.AddMvc().AddApplicationPart(Assembly.GetExecutingAssembly());
             services.AddServerSideBlazor(o => o.DetailedErrors = true);
-            fusionAuth.AddBlazor(o => { }); // Must follow services.AddServerSideBlazor()!
+            // fusionAuth.AddBlazor(o => { }); // Must follow services.AddServerSideBlazor()!
 
             // Swagger & debug tools
             services.AddSwaggerGen(c => {
@@ -147,7 +147,7 @@ namespace FusionDemo.HealthCentral.Host
             app.UseWebSockets(new WebSocketOptions() {
                 KeepAliveInterval = TimeSpan.FromSeconds(30),
             });
-            app.UseFusionSession();
+            // app.UseFusionSession();
 
             // Static + Swagger
             app.UseBlazorFrameworkFiles();
@@ -159,8 +159,8 @@ namespace FusionDemo.HealthCentral.Host
 
             // API controllers
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            // app.UseAuthentication();
+            // app.UseAuthorization();
             app.UseEndpoints(endpoints => {
                 endpoints.MapBlazorHub();
                 endpoints.MapFusionWebSocketServer();

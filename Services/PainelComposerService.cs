@@ -24,7 +24,7 @@ namespace FusionDemo.HealthCentral.Services
             this.logger = logger;
             logger.LogInformation("PainelComposedService Started");
         }
-        public virtual async Task<PainelComposedValue> GetComposedValueAsync(string parameter, Session session, CancellationToken cancellationToken = default)
+        public virtual async Task<PainelComposedValue> GetComposedValueAsync(string parameter, CancellationToken cancellationToken = default)
         {
             var timeValueTask = timeService.GetTimeAsync(cancellationToken);
             var availableUnitTask = patientService.GetAvailableUnits(cancellationToken);

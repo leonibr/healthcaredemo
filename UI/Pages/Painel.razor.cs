@@ -157,7 +157,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
         {
             var parameter = "PainelSample-";
             var composedValue = await PainelComposerService.GetComposedValueAsync(parameter, cancellationToken);
-            Console.WriteLine("ComputeStateAsync " + JsonConvert.SerializeObject(composedValue));
+          
             if (SelectedCareUnit != null)
             {
                 SelectedCareUnit = composedValue.AvailableUnits.Where(c => c.CareUnitId == SelectedCareUnit.CareUnitId).FirstOrDefault()!;

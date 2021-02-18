@@ -143,7 +143,7 @@
                     <MudCardHeader>
                         <CardHeaderAvatar>
                             <MudAvatar Color="@(u.FreeBeds == 0 ? Color.Error : Color.Success)">
-                                <MudIcon FontClass="fas fa-hospital-alt"></MudIcon>
+                                <MudIcon Icon="fas fa-hospital-alt"></MudIcon>
                             </MudAvatar>
                         </CardHeaderAvatar>
                         <CardHeaderContent>
@@ -263,7 +263,7 @@
 
 
 @code {
-  Stopwatch sp = new Stopwatch();
+
 
                 protected RenderFragment showBed(HospitalBed bed)
                 {
@@ -278,14 +278,15 @@
             <MudCardHeader>
                 <CardHeaderAvatar>
                     <MudAvatar Size="Size.Small" Color="@color">
-                        <MudIcon Icon="@Icons.Material.Outlined.RemoveCircle" />
+                        <MudIcon Icon="@Icons.Material.Filled.SingleBed" />
                     </MudAvatar>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
                     <MudText Typo="Typo.caption">Code: @bed.HospitalBedId</MudText>
                     @if (isEmptyBed)
                     {
-                        <MudText Typo="Typo.h4">Available!</MudText>
+                        <MudText Typo="Typo.h5">Bed Available!</MudText>
+                        <MudText Typo="Typo.body2">Place a patient here.</MudText>
                     }
                     else
                     {
@@ -297,7 +298,7 @@
                 <CardHeaderActions>
                     @if (!isEmptyBed)
                     {
-                        <MudTooltip Text="@($"Discharge {patient.Name}")" Placement="Placement.Top">
+                        <MudTooltip Text="@($"Click to Discharge {patient.Name}")" Placement="Placement.Top">
                             
                         <MudIconButton Icon="@Icons.Material.Outlined.RemoveCircle" Color="Color.Default" OnClick="(() => DischargePatient(patient, bed))" />
                         </MudTooltip>
@@ -323,17 +324,6 @@ return (@<MudIcon FontClass="fas fa-female" Size="Size.Small" />);
 return (@<MudIcon FontClass="fas fa-question" />);
 }
 
-    protected override bool ShouldRender()
-    {
-        sp.Restart();
-    return base.ShouldRender();
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-        {
-            Console.WriteLine($"Rendered {sp.Elapsed.TotalMilliseconds:0.00} ms");
-            base.OnAfterRender(firstRender);
-        }
 
 
 }

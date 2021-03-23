@@ -56,7 +56,7 @@ docker-compose run --service-ports healthcare_demo
 - Maybe a dashboard
 
 ### Known Issues:
-- Only on Webassembly version: do not keep the developer tools tab opened for too long ( > ~10 min), it will increase cpu usage, but as soon as you close it and refresh the page everything is ok again.
+- [Fixed] ~~Only on Webassembly version: do not keep the developer tools tab opened for too long ( > ~10 min), it will increase cpu usage, but as soon as you close it and refresh the page everything is ok again.~~
 
 ## License
 - MIT

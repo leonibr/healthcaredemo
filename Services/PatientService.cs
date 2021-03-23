@@ -23,9 +23,14 @@ namespace FusionDemo.HealthCentral.Services
         private IList<string> notifications = new List<string>();
         private readonly INotificationService notificationService;
 
+        private readonly Faker<Patient> faker = new();
+
+
         public PatientService(INotificationService notificationService)
         {
             // one time setup
+
+            SetUpFakerPatient(faker);
 
             var unit1 = new CareUnit()
             {
@@ -122,6 +127,16 @@ namespace FusionDemo.HealthCentral.Services
             this.notificationService = notificationService;
         }
 
+        private void SetUpFakerPatient(Faker<Patient> faker)
+        {         
+            faker
+                .RuleFor(c => c.Gender, (f) => f.PickRandom<GenderType>())
+                .RuleFor(c => c.Name, (f, u) => f.Name.FullName(u.Gender == GenderType.Male ?
+                    Bogus.DataSets.Name.Gender.Male : Bogus.DataSets.Name.Gender.Female))
+                .RuleFor(c => c.DOB, (f, u) => f.Date.Between(DateTime.Now.AddYears(-35), DateTime.Now.AddYears(-95)))
+                .RuleFor(c => c.PatientId, f => Guid.NewGuid());
+        }
+
         [ComputeMethod]
         public virtual Task<IEnumerable<CareUnit>> GetAvailableUnits(CancellationToken cancellationToken = default)
         {
@@ -145,28 +160,7 @@ namespace FusionDemo.HealthCentral.Services
                 return Task.CompletedTask;
             }
 
-            static Bogus.DataSets.Name.Gender bogusGender(GenderType gender)
-            {
-                if (gender == GenderType.Male)
-                    return Bogus.DataSets.Name.Gender.Male;
-                else
-                    return Bogus.DataSets.Name.Gender.Female;
-            }
-
-            var faker = new Faker<Patient>();
-            GenderType gender = GenderType.Male;
-            faker.RuleFor(c => c.Gender, (f) =>
-            {
-                gender = f.PickRandom<GenderType>();
-
-                if (gender == GenderType.Male)
-                    return GenderType.Male;
-                else
-                    return GenderType.Female;
-            });
-            faker.RuleFor(c => c.Name, (f, u) => f.Name.FullName(bogusGender(gender)));
-            faker.RuleFor(c => c.DOB, (f, u) => f.Date.Between(DateTime.Now.AddYears(-35), DateTime.Now.AddYears(-95)));
-            faker.RuleFor(c => c.PatientId, f => Guid.NewGuid());
+         
 
             Patient patient = faker.Generate(1).First();
 
@@ -224,7 +218,7 @@ namespace FusionDemo.HealthCentral.Services
 
             if (unitExists
                 && bed != null
-                && !bed.IsFree &&
+                && bed.IsFree &&
                 bed.Patient.PatientId == patientId)
             {
                 bed.Patient = null!;

@@ -20,7 +20,10 @@
 
     }
 
-    protected override async Task<Domain.AppNotification> ComputeStateAsync(System.Threading.CancellationToken cancellationToken)
+
+
+
+        protected override async Task<Domain.AppNotification> ComputeState(System.Threading.CancellationToken cancellationToken)
     {
         var notification = await NotificationService.GetNotification(cancellationToken);
         if (CurrentNotificaion != null && notification != null)

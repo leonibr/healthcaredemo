@@ -77,7 +77,8 @@ namespace FusionDemo.HealthCentral.UI
             services.AddMudServices();
             // Default delay for update delayers
             services.AddSingleton(c => new UpdateDelayer.Options() {
-                Delay = TimeSpan.FromSeconds(0.1),
+                
+                CancellationDelay = TimeSpan.FromSeconds(0.1),
             });
 
             services.AddSingleton<IPluralize, Pluralizer>();

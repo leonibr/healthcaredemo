@@ -152,7 +152,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
 
 
-        protected override async Task<PainelComposedValue> ComputeStateAsync(CancellationToken cancellationToken)
+        protected override async Task<PainelComposedValue> ComputeState(CancellationToken cancellationToken)
 
         {
             var parameter = "PainelSample-";

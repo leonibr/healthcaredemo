@@ -1,4 +1,4 @@
-﻿@inherits LiveComponentBase<Domain.AppNotification>
+﻿@inherits ComputedStateComponent<Domain.AppNotification>
 @inject ISnackbar Snackbar
 @inject INotificationService NotificationService
 
@@ -13,9 +13,9 @@
         base.OnInitialized();
     }
 
-    protected override void ConfigureState(LiveState<Domain.AppNotification>.Options options)
+    protected override void ConfigureState(ComputedState<Domain.AppNotification>.Options options)
     {
-        options.WithUpdateDelayer(.5);
+        options.UpdateDelayer = UpdateDelayer.Default;
 
 
     }

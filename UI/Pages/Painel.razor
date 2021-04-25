@@ -5,16 +5,16 @@
 
 
 @{
-    var time = State.LastValue.ServerTime;
-    units = State.LastValue.AvailableUnits.ToList();
-    patients = State.LastValue.PatientsWaitingList.ToList(); ;
+    var time = State.Value.ServerTime;
+    units = State.Value.AvailableUnits.ToList();
+    patients = State.Value.PatientsWaitingList.ToList(); ;
     var error = State.Error;
 }
 <MudGrid>
     <MudItem xs="12" sm="4">
         <MudText Typo="Typo.h5" Class="pb-3">Server Time</MudText>
 
-        <StatefulComponentState Component="@this" />
+        <StatefulComponentState State="@State" />
 
         @if (error != null)
         {
@@ -72,10 +72,10 @@
                             Patient waiting list
                         </MudText>
                         <MudSelect T="FilterByPatientOption" @bind-Value="@SelectedOrderBy" Label="Order By" Style="width: 50%;">
-                            <MudSelectItem Value="FilterByPatientOption.AgeDescending"><MudText Typo="Typo.caption">Age <MudIcon FontClass="fas fa-sort-numeric-down-alt"></MudIcon></MudText></MudSelectItem>
-                            <MudSelectItem Value="FilterByPatientOption.AgeAscending"><MudText Typo="Typo.caption">Age <MudIcon FontClass="fas fa-sort-numeric-down"></MudIcon></MudText></MudSelectItem>
-                            <MudSelectItem Value="FilterByPatientOption.ArrivalDescending"><MudText Typo="Typo.caption">Arrival <MudIcon FontClass="fas fa-sort-numeric-down-alt"></MudIcon></MudText></MudSelectItem>
-                            <MudSelectItem Value="FilterByPatientOption.ArrivalAscending"><MudText Typo="Typo.caption">Arrival <MudIcon FontClass="fas fa-sort-numeric-down"></MudIcon></MudText></MudSelectItem>
+                            <MudSelectItem Value="FilterByPatientOption.AgeDescending"><MudText Typo="Typo.caption">Age <MudIcon  Icon="fas fa-sort-numeric-down-alt"></MudIcon></MudText></MudSelectItem>
+                            <MudSelectItem Value="FilterByPatientOption.AgeAscending"><MudText Typo="Typo.caption">Age <MudIcon Icon="fas fa-sort-numeric-down"></MudIcon></MudText></MudSelectItem>
+                            <MudSelectItem Value="FilterByPatientOption.ArrivalDescending"><MudText Typo="Typo.caption">Arrival <MudIcon Icon="fas fa-sort-numeric-down-alt"></MudIcon></MudText></MudSelectItem>
+                            <MudSelectItem Value="FilterByPatientOption.ArrivalAscending"><MudText Typo="Typo.caption">Arrival <MudIcon Icon="fas fa-sort-numeric-down"></MudIcon></MudText></MudSelectItem>
                         </MudSelect>
                     </CardHeaderContent>
                     <CardHeaderActions>
@@ -290,7 +290,10 @@
                     }
                     else
                     {
+                        @if (!isEmptyBed)
+                        {
                         <MudText Typo="Typo.body2">@(patient.Name), @(formatAge(patient.Age)), @(showGender(patient.Gender))</MudText>
+                        }
                         <MudText Typo="Typo.body2">In bed for @(formatTimeInLine(bed.OccupationDuration))</MudText>
                     }
 
@@ -315,13 +318,13 @@ protected RenderFragment showGender(GenderType genderType)
 {
   if (genderType == GenderType.Male)
   {
-      return (@<MudIcon FontClass="fas fa-male" Size="Size.Small" />);
+      return (@<MudIcon Icon="fas fa-male" Size="Size.Small" />);
 }
 if (genderType == GenderType.Female)
 {
-return (@<MudIcon FontClass="fas fa-female" Size="Size.Small" />);
+return (@<MudIcon Icon="fas fa-female" Size="Size.Small" />);
 }
-return (@<MudIcon FontClass="fas fa-question" />);
+return (@<MudIcon Icon="fas fa-question" />);
 }
 
 

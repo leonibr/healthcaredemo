@@ -11,22 +11,25 @@ using Stl.Fusion.Authentication;
 using Stl.Fusion.Blazor;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.UI.Pages
 {
-    public class PainelPage : LiveComponentBase<PainelComposedValue>
+    public class PainelPage : ComputedStateComponent<PainelComposedValue>
     {
-        [Inject] IPainelComposerService PainelComposerService { get; set; }
-        [Inject] IPatientService PatientService { get; set; }
-        [Inject] ISnackbar Snackbar { get; set; }
-        [Inject] ILogger<Painel> Logger { get; set; }
+        [Inject] [AllowNull, NotNull] IPainelComposerService PainelComposerService { get; set; }
+        [Inject] [AllowNull, NotNull] IPatientService PatientService { get; set; }
+        [Inject] [AllowNull, NotNull] ISnackbar Snackbar { get; set; }
+        [Inject] [AllowNull, NotNull] ILogger<Painel> Logger { get; set; }
  
-        [Inject] IDialogService Dialog { get; set; }
+        [Inject] [AllowNull, NotNull] IDialogService Dialog { get; set; }
         protected string draggingCss { get; set; } = "";
-        protected Patient DragPatient { get; set; } = null!;
+
+        [AllowNull]
+        protected Patient DragPatient { get; set; } = null;
 
 
         protected IList<Patient> patients { get; set; } = new List<Patient>();
@@ -40,6 +43,8 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
         public FilterByPatientOption SelectedOrderBy { get; set; } = FilterByPatientOption.ArrivalDescending;
         protected Func<FilterByPatientOption, string> FilterConverter = option => option.ToString();
+
+
         public enum FilterByPatientOption
         {
             AgeDescending = 1,
@@ -130,13 +135,13 @@ namespace FusionDemo.HealthCentral.UI.Pages
             base.OnInitialized();
         }
 
-        protected override void ConfigureState(LiveState<PainelComposedValue>.Options options)
+        protected override void ConfigureState(ComputedState<PainelComposedValue>.Options options)
         {
-            options.WithUpdateDelayer(0.5);
+            options.UpdateDelayer = UpdateDelayer.MinUpdateDelay;
 
 
         }
-        protected void SelectUnit(CareUnit unit)
+        protected void SelectUnit([AllowNull, MaybeNull] CareUnit unit)
         {
 
             if (SelectedCareUnit != null && unit != null && SelectedCareUnit?.CareUnitId == unit.CareUnitId)
@@ -147,6 +152,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
             {
                 SelectedCareUnit = unit;
             }
+            StateHasChanged();
         }
 
 
@@ -184,11 +190,11 @@ namespace FusionDemo.HealthCentral.UI.Pages
             return $"{days}{hours}{minutes}{seconds}";
         }
 
-        public async Task PutPatient(Patient patient, HospitalBed bed = null)
+        public async Task PutPatient(Patient patient, [AllowNull, MaybeNull] HospitalBed bed = null)
         {
             var parameters = new DialogParameters();
             parameters.Add("patient", patient);
-            parameters.Add("units", State.LastValue.AvailableUnits);
+            parameters.Add("units", State.Value.AvailableUnits);
             parameters.Add("preSelectedBed", bed);
 
             var dialog = Dialog.Show<PainelDialogs.PutPatientOnBed>("Put Patient", parameters, new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true });
@@ -210,7 +216,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
         {
             var parameters = new DialogParameters();
             parameters.Add("patient", patient);
-            parameters.Add("units", State.LastValue.AvailableUnits);
+            parameters.Add("units", State.Value.AvailableUnits);
             parameters.Add("preSelectedBed", bed);
 
             var dialog = Dialog.Show<PainelDialogs.DischargePatient>($"Discharge Patient: {patient.Name}", parameters, new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true });
@@ -235,7 +241,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
         protected void Refresh()
         {
             State.Invalidate();
-            State.CancelUpdateDelay();
+            //State.();
         }
 
         protected async  Task AddToWaitingList()

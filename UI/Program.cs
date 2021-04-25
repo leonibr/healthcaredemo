@@ -33,14 +33,8 @@ namespace FusionDemo.HealthCentral.UI
             builder.RootComponents.Add<App>("#app");
             var host = builder.Build();
 
-            var runTask = host.RunAsync();
-            Task.Run(async () => {
-                // We "manually" start IHostedServices here, because Blazor host doesn't do this.
-                var hostedServices = host.Services.GetRequiredService<IEnumerable<IHostedService>>();
-                foreach (var hostedService in hostedServices)
-                    await hostedService.StartAsync(default);
-            });
-            return runTask;
+            host.Services.HostedServices().Start();
+            return host.RunAsync();
         }
 
         public static void ConfigureServices(IServiceCollection services, WebAssemblyHostBuilder builder)
@@ -76,10 +70,7 @@ namespace FusionDemo.HealthCentral.UI
 
             services.AddMudServices();
             // Default delay for update delayers
-            services.AddSingleton(c => new UpdateDelayer.Options() {
-                
-                CancellationDelay = TimeSpan.FromSeconds(0.1),
-            });
+            services.AddSingleton<IUpdateDelayer>(c => new UpdateDelayer(0.1));
 
             services.AddSingleton<IPluralize, Pluralizer>();
 

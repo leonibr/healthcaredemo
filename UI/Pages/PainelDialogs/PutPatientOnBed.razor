@@ -33,9 +33,9 @@
                     {
                         <MudSelect Label="Select Care Unit" @bind-Value="SelectedBed" HelperText="Available Hospital Beds">
                             @foreach (var bed in beds)
-                            {
-                                <MudSelectItem Value="@bed" >Bed Cod: @bed.HospitalBedId</MudSelectItem>
-                            }
+                                    {
+                                <MudSelectItem Value="@bed">Bed Cod: @bed.HospitalBedId</MudSelectItem>
+                                    }
                         </MudSelect>
                     }
                 }
@@ -51,8 +51,8 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    private CareUnit SelectedCareUnit { get; set; }
-    private HospitalBed SelectedBed { get; set; }
+    private CareUnit SelectedCareUnit { get; set; } = null!;
+    private HospitalBed SelectedBed { get; set; } = null!;
 
 
     [Parameter] public Patient patient { get; set; } = new Patient();
@@ -67,16 +67,23 @@
     {
         if (preSelectedBed != null)
         {
-            SelectedCareUnit = units.Where(c => c.HospitalBeds.Any(f =>  f.HospitalBedId == preSelectedBed.HospitalBedId)).FirstOrDefault();
-            SelectedBed = SelectedCareUnit
-                .HospitalBeds
-                .Where(b => b.IsFree && b.HospitalBedId == preSelectedBed.HospitalBedId)
-                .FirstOrDefault();
+            SelectedCareUnit = units.Where(c => c.HospitalBeds
+            .Any(f => f.HospitalBedId == preSelectedBed.HospitalBedId))
+                .FirstOrDefault()!;
+            if (SelectedCareUnit != null)
+            {
+
+                SelectedBed = SelectedCareUnit
+                    .HospitalBeds
+                    .Where(b => b.IsFree && b.HospitalBedId == preSelectedBed.HospitalBedId)
+                    .FirstOrDefault()!;
+            }
+
 
         }
     }
 
-    private async Task PutPatient()
+    private void PutPatient()
     {
         var tuple = (patient.PatientId, SelectedCareUnit.CareUnitId, SelectedBed.HospitalBedId);
 

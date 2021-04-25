@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.Domain
 {
-    public class CareUnit
+    public record CareUnit
     {
         public int CareUnitId { get; set; }
 

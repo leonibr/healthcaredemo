@@ -150,13 +150,39 @@ namespace FusionDemo.HealthCentral.Services
         }
 
 
+        public Task ClearWaitingList(CancellationToken cancellation = default)
+        {
+            notificationService.AddNotification($"Some user has just reset the waiting list");
+            waitingList.Clear();
+            using (Computed.Invalidate())
+                GetPatientWaitingList();
+            return Task.CompletedTask;
+        }   
+        
+        public Task EmptyHospitalBeds(CancellationToken cancellation = default)
+        {
+            notificationService.AddNotification($"Some user has just reset the Hospital beds");
+            careUnits.Values.ToList().ForEach(c =>
+            {
+                c.HospitalBeds.ToList().ForEach(bed =>
+                {
+                    bed.Patient = null!;
+                    bed.OccupiedSince = null!;
+                });
+            });
+
+            using (Computed.Invalidate())
+                GetAvailableUnits(cancellation).Ignore();
+            return Task.CompletedTask;
+        }
+
 
         // public void AddPatientToWaitingList(Patient patient, CancellationToken cancellationToken = default)
         public Task AddPatientToWaitingList(CancellationToken cancellationToken = default)
         {
             if (waitingList.Count >= 50)
             {
-                notificationService.AddNotification($"Waiting List limit reached!!");
+                notificationService.AddNotification($"Waiting List limit reached!");
                 return Task.CompletedTask;
             }
 
@@ -218,7 +244,7 @@ namespace FusionDemo.HealthCentral.Services
 
             if (unitExists
                 && bed != null
-                && bed.IsFree &&
+                && !bed.IsFree &&
                 bed.Patient.PatientId == patientId)
             {
                 bed.Patient = null!;

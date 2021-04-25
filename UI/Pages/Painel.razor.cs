@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.UI.Pages
 {
-    public class PainelPage : ComputedStateComponent<PainelComposedValue>
+    public  class PainelPage : ComputedStateComponent<PainelComposedValue>
     {
         [Inject] [AllowNull, NotNull] IPainelComposerService PainelComposerService { get; set; }
         [Inject] [AllowNull, NotNull] IPatientService PatientService { get; set; }
@@ -35,17 +35,17 @@ namespace FusionDemo.HealthCentral.UI.Pages
         protected IList<Patient> patients { get; set; } = new List<Patient>();
         protected IList<CareUnit> units { get; set; } = new List<CareUnit>();
 
-        protected IList<Patient> FiltredPatientList  => filterPatient(patients);
+        protected IList<Patient> OrderedPatientList  => filterPatient(patients);
 
         protected string[] labels = { "Free", "Occuppied" };
         public string SelectedFilterPatient { get; set; } = "2";
         public CareUnit SelectedCareUnit { get; set; } = null!;
 
-        public FilterByPatientOption SelectedOrderBy { get; set; } = FilterByPatientOption.ArrivalDescending;
-        protected Func<FilterByPatientOption, string> FilterConverter = option => option.ToString();
+        public OrderByPatientOption SelectedOrderBy { get; set; } = OrderByPatientOption.ArrivalDescending;
+        protected Func<OrderByPatientOption, string> FilterConverter = option => option.ToString();
 
 
-        public enum FilterByPatientOption
+        public enum OrderByPatientOption
         {
             AgeDescending = 1,
             ArrivalDescending = 2,
@@ -103,16 +103,16 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
             switch (op)
             {
-                case FilterByPatientOption.AgeDescending:
+                case OrderByPatientOption.AgeDescending:
                     filtredPatients = statePatients.OrderByDescending(c => c.Age).ToList();
                     break;
-                case FilterByPatientOption.ArrivalDescending:
+                case OrderByPatientOption.ArrivalDescending:
                     filtredPatients = statePatients.OrderByDescending(c => c.TimeInLine).ToList();
                     break;
-                case FilterByPatientOption.AgeAscending:
+                case OrderByPatientOption.AgeAscending:
                     filtredPatients = statePatients.OrderBy(c => c.Age).ToList();
                     break;
-                case FilterByPatientOption.ArrivalAscending:
+                case OrderByPatientOption.ArrivalAscending:
                     filtredPatients = statePatients.OrderBy(c => c.TimeInLine).ToList();
                     break;
                 default:
@@ -171,24 +171,9 @@ namespace FusionDemo.HealthCentral.UI.Pages
             return composedValue;
         }
 
-        protected string formatAge(TimeSpan timeSpan)
-        {
 
-            var years = timeSpan.Days / 365;
-            var months = (timeSpan.Days % 365) / 30;
-            return $"{years} yrs, {months} months";
 
-        }
 
-        protected string formatTimeInLine(TimeSpan timeSpan)
-        {
-
-            var days = timeSpan.Days > 0 ? $"{timeSpan.Days} days, " : "";
-            var hours = timeSpan.Hours > 0 ? $"{timeSpan.Hours} hours, " : "";
-            var minutes = timeSpan.Minutes > 0 ? $"{timeSpan.Minutes} minutes, " : "";
-            var seconds = $"{timeSpan.Seconds} seconds.";
-            return $"{days}{hours}{minutes}{seconds}";
-        }
 
         public async Task PutPatient(Patient patient, [AllowNull, MaybeNull] HospitalBed bed = null)
         {
@@ -212,9 +197,10 @@ namespace FusionDemo.HealthCentral.UI.Pages
             }
         }
 
-        protected async Task DischargePatient(Patient patient, HospitalBed bed)
+        protected async Task DischargePatient(HospitalBed bed)
         {
             var parameters = new DialogParameters();
+            var patient = bed.Patient;
             parameters.Add("patient", patient);
             parameters.Add("units", State.Value.AvailableUnits);
             parameters.Add("preSelectedBed", bed);
@@ -231,7 +217,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
                     hospitalBedId: data.HospitalBedId,
                     careUnitId: data.CareUnitId);
                 if (!ok)
-                    Snackbar.Add($"Could not put {patient?.Name} on bed {bed?.HospitalBedId}", Severity.Error);
+                    Snackbar.Add($"Could not discharge {patient?.Name} on bed {bed?.HospitalBedId}", Severity.Error);
 
 
             }
@@ -247,6 +233,15 @@ namespace FusionDemo.HealthCentral.UI.Pages
         protected async  Task AddToWaitingList()
         {
             await PatientService.AddPatientToWaitingList();
+        }
+
+        protected async Task ClearWaitingList()
+        {
+            await PatientService.ClearWaitingList();
+        }  
+        protected async Task EmptyHospitalBeds()
+        {
+            await PatientService.EmptyHospitalBeds();
         }
     }
 }

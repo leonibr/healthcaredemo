@@ -1,0 +1,16 @@
+﻿    @if (Exception != null)
+    {
+        <MudAlert Severity="Severity.Error">Update error: @Exception.Message</MudAlert>
+        <p>
+            <MudText Typo="Typo.caption">
+                @Exception.StackTrace
+            </MudText>
+        </p>
+    }
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "Error:";
+    [Parameter]
+    public Exception? Exception { get; set; }
+}

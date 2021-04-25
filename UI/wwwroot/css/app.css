@@ -25,8 +25,19 @@ body div.mud-main-content {
     }
 
 .selected-card {
-    border: 2px solid blue;
+    /*border: 1px solid blue;*/
+    outline: 2px solid var(--mud-palette-primary);
+    /*
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 25%);*/
 }
+.not-selected-card {
+    opacity: .4;
+}
+
 
 .dragging {
     cursor: grabbing;
@@ -54,4 +65,8 @@ body div.mud-main-content {
 
 .rate-red {
     color: #fe2828;
+}
+#blazor-error-ui{
+    background-color: var(--mud-palette-error);
+
 }

@@ -1,23 +1,23 @@
 @using Stl.Async
 @implements IDisposable
 
-<div>
+<div class="flex flex-column">
     <MudText Inline="true">Component state: </MudText>
     @if (IsLoading)
             {
-        <MudChip Icon="@Icons.Material.Outlined.Check">Loading...</MudChip>
+        <MudChip Color="Color.Primary" Icon="@Icons.Material.Outlined.Check">Loading...</MudChip>
 
             }
     else if (IsUpdating){
-        <MudChip Icon="@Icons.Material.Outlined.Check">Updating...</MudChip>
+        <MudChip  Color="Color.Warning"  Icon="@Icons.Material.Outlined.Check">Updating...</MudChip>
 
             }
                 else if (IsUpdatePending) { 
-        <MudChip Icon="@Icons.Material.Outlined.Check">Updating pending...</MudChip>
+        <MudChip  Color="Color.Default" Icon="@Icons.Material.Outlined.Check">Updating pending...</MudChip>
     
     }
     else  {
-        <MudChip Icon="@Icons.Material.Outlined.Check">In sync</MudChip>
+        <MudChip  Color="Color.Success"  Icon="@Icons.Material.Outlined.Check">In sync</MudChip>
     }
 </div>
 

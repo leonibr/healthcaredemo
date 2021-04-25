@@ -34,6 +34,11 @@ namespace FusionDemo.HealthCentral.UI.Services
        
         [Post("add-patient-to-waiting-list")]
         Task AddPatientToWaitingList(CancellationToken cancellationToken = default);
+        [Post("clear-waiting-list")]
+        Task ClearWaitingList(CancellationToken cancellationToken = default);
+
+        [Post("empty-hospital-beds")]
+        Task EmptyHospitalBeds(CancellationToken cancellationToken = default);
 
         [Post("put-on-bed")]
         Task<bool> PutPatientOnBed(Guid patientId, int hospitalBedId, int careUnitId, CancellationToken cancellationToken = default);

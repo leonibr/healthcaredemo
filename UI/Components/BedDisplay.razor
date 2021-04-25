@@ -1,0 +1,80 @@
+﻿<div ondragover="event.preventDefault()"
+     @ondrop="@(() => HandleOnDrop(Bed))">
+    <MudCard Class="mb-3">
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                <MudAvatar Size="Size.Small" Color="@color">
+                    <MudIcon Icon="@Icons.Material.Filled.SingleBed" />
+                </MudAvatar>
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.caption">Code: @Bed.HospitalBedId</MudText>
+                @if (isEmptyBed)
+                {
+                    <MudText Typo="Typo.h5">Bed Available!</MudText>
+                    <MudText Typo="Typo.body2">Place a patient here.</MudText>
+                }
+                else
+                {
+                    @if (!isEmptyBed)
+                    {
+                        <MudText Typo="Typo.body2">@($"{patient.Name}, {patient.Age.ToAgeString()}, ")<GenderDisplay Gender="patient.Gender" /></MudText>
+                    }
+                    <MudText Typo="Typo.caption">In bed for @(Bed.OccupationDuration.ToTimeInLineString())</MudText>
+                }
+
+            </CardHeaderContent>
+            <CardHeaderActions>
+                @if (!isEmptyBed)
+                {
+                    <MudTooltip Text="@($"Click to Discharge {patient.Name}")" Placement="Placement.Top">
+
+                        <MudIconButton Icon="@Icons.Material.Outlined.RemoveCircle" Color="Color.Default" OnClick="@(() => HandleDischargeClick(Bed))" />
+                    </MudTooltip>
+                }
+            </CardHeaderActions>
+
+        </MudCardHeader>
+    </MudCard>
+</div>
+@code {
+    [AllowNull]
+    [Parameter]
+    public HospitalBed Bed { get; set; }
+
+
+    [Parameter]
+    public EventCallback<HospitalBed> OnDischargeClicked { get; set; } //DischargePatient(patient, bed)
+    [Parameter]
+    public EventCallback<HospitalBed> OnDroppedBed { get; set; } //DischargePatient(patient, bed)
+
+    private Patient patient { get; set; }
+    private bool isEmptyBed => patient == null;
+    private MudBlazor.Color color;
+
+    protected override void OnParametersSet()
+    {
+        patient = Bed.Patient;
+
+        color = isEmptyBed ? Color.Success : Color.Error;
+    }
+
+    protected override void OnInitialized()
+    {
+
+
+    }
+    //
+    protected async Task HandleDischargeClick(HospitalBed bed)
+    {
+        await OnDischargeClicked.InvokeAsync(bed);
+
+       
+
+    }
+    protected async Task HandleOnDrop(HospitalBed bed)
+    {
+        await OnDroppedBed.InvokeAsync(bed);
+    }
+
+}

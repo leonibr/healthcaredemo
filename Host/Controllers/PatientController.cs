@@ -28,6 +28,22 @@ namespace FusionDemo.HealthCentral.Host.Controllers
 
             return new OkResult();
         }
+          
+        [HttpPost("clear-waiting-list")]
+        public async Task<IActionResult> ClearWaitingList(CancellationToken cancellationToken = default)
+        {
+            await patientService.ClearWaitingList(cancellationToken);
+
+            return new OkResult();
+        }
+
+        [HttpPost("empty-hospital-beds")]
+        public async Task<IActionResult> EmptyHospitalBeds(CancellationToken cancellationToken = default)
+        {
+            await patientService.EmptyHospitalBeds(cancellationToken);
+
+            return new OkResult();
+        }
 
         [HttpPost("discharge-patient")]
         public Task<bool> DischargePatientFromBed(Guid patientId, int hospitalBedId, int careUnitId, CancellationToken cancellationToken = default)

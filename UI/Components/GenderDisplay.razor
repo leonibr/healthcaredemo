@@ -1,0 +1,20 @@
+﻿
+
+@if (Gender == GenderType.Male)
+{
+    <MudIcon Icon="fas fa-male" Size="Size.Small" />
+}
+else if (Gender == GenderType.Female)
+{
+    <MudIcon Icon="fas fa-female" Size="Size.Small" />
+
+}else    
+{
+<MudIcon Icon="fas fa-question" />
+}
+
+@code {
+    [AllowNull, MaybeNull]
+    [Parameter]
+    public GenderType Gender { get; set; }
+}

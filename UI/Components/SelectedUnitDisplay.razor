@@ -1,0 +1,103 @@
+﻿<MudGrid>
+    <MudItem sm="12">
+        <MudPaper Class="pa-5">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudText Typo="Typo.h6">@CareUnit.Name</MudText>
+                    <MudText Typo="Typo.body2" Class="my-1">
+                        Occupational Rate(%):
+                    </MudText>
+                    @{
+
+
+                    }
+                    <MudText Typo="Typo.h1" Class="@gradientColor(CareUnit.OccupationRate)">
+                        @rateDisplay.intPart,<MudElement HtmlTag="span"
+                                             Class="ma-0"
+                                             Style="font-size: 2rem;">@rateDisplay.decPart</MudElement>%
+                                        </MudText>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudChart ChartType="ChartType.Pie" InputData="@(new double[] { CareUnit.FreeBeds, CareUnit.Capacity - CareUnit.FreeBeds })" InputLabels="@labels" Width="100px" Height="100px" />
+
+                                    </MudItem>
+                                </MudGrid>
+                            </MudPaper>
+
+                        </MudItem>
+
+                        <MudItem xs="12" sm="6">
+                            @foreach (var bed in LeftColumn)
+                            {
+                                <BedDisplay Bed="bed" OnDischargeClicked="@HandleDischargeClick" OnDroppedBed="HandleOnDrop" />
+                            }
+                        </MudItem>
+
+                        <MudItem xs="12" sm="6">
+                            @foreach (var bed in RightColumn)
+                            {
+                                <BedDisplay Bed="bed" OnDischargeClicked="@HandleDischargeClick" OnDroppedBed="HandleOnDrop" />
+                            }
+                        </MudItem>
+                    </MudGrid>
+
+@code {
+    [Parameter]
+    [AllowNull, MaybeNull]
+    public CareUnit CareUnit { get; set; }
+
+    [Parameter]
+    public EventCallback<HospitalBed> OnDischargeClicked { get; set; } //DischargePatient(patient, bed)
+    [Parameter]
+    public EventCallback<HospitalBed> OnDroppedBed { get; set; } //DischargePatient(patient, bed)
+
+    protected string[] labels = { "Free", "Occuppied" };
+
+    private IEnumerable<HospitalBed> LeftColumn { get; set; } = Array.Empty<HospitalBed>();
+    private IEnumerable<HospitalBed> RightColumn { get; set; } = Array.Empty<HospitalBed>();
+    private (string intPart, string decPart) rateDisplay = (string.Empty, string.Empty);
+
+
+    protected override void OnParametersSet()
+    {
+        var colCount = int.Parse(Math.Ceiling(CareUnit.HospitalBeds.Count() / 2.0).ToString());
+        LeftColumn = CareUnit.HospitalBeds.Take(colCount).ToList();
+        RightColumn = CareUnit.HospitalBeds.Skip(colCount).ToList();
+        rateDisplay = RateDisplay(CareUnit.OccupationRate);
+    }
+    protected override void OnInitialized()
+    {
+
+    }
+    protected string gradientColor(double rate)
+    {
+        if (rate <= 33)
+            return "rate-green";
+        if (rate <= 66)
+            return "rate-orange";
+
+        return "rate-red";
+    }
+
+    protected (string intPart, string decPart) RateDisplay(double rate)
+    {
+        // var rate = CareUnit.OccupationRate;
+        var arrParts = rate.ToString("0.00").Split(',');
+
+        var intPart = arrParts[0] ?? "0";
+        string decPart = "00";
+        if (arrParts.Length == 2)
+        {
+            decPart = arrParts[1];
+        }
+        return (intPart, decPart);
+    }
+    protected async Task HandleDischargeClick(HospitalBed bed)
+    {
+        await OnDischargeClicked.InvokeAsync(bed);
+    }
+    protected async Task HandleOnDrop(HospitalBed bed)
+    {
+        await OnDroppedBed.InvokeAsync(bed);
+    }
+} 

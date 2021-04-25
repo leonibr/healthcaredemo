@@ -12,7 +12,9 @@ namespace FusionDemo.HealthCentral.Abstractions
     public interface IPatientService
     {
         Task AddPatientToWaitingList(CancellationToken cancellationToken = default);
+        Task ClearWaitingList(CancellationToken cancellation = default);
         Task<bool> DischargePatientFromBed(Guid patientId, int hospitalBedId, int careUnitId, CancellationToken cancellationToken = default);
+        Task EmptyHospitalBeds(CancellationToken cancellation = default);
         [ComputeMethod]
         Task<IEnumerable<Domain.CareUnit>> GetAvailableUnits(CancellationToken cancellationToken = default);
         [ComputeMethod]

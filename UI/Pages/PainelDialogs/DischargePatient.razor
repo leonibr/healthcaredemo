@@ -8,10 +8,10 @@
         <MudTextField Value="@patient.DOB" Label="Date of Birfth" ReadOnly="true" />
         <MudGrid>
             <MudItem sm="6">
-                <MudTextField Value="@SelectedCareUnit.Name" Label="Care Unit" ReadOnly="true" />              
+                <MudTextField Value="@SelectedCareUnit?.Name" Label="Care Unit" ReadOnly="true" />              
             </MudItem>
             <MudItem sm="6">
-                <MudTextField Value="@($"Code: {SelectedBed.HospitalBedId}")" Label="Bed Code" ReadOnly="true" />      
+                <MudTextField Value="@($"Code: {SelectedBed?.HospitalBedId}")" Label="Bed Code" ReadOnly="true" />      
             </MudItem>
 
         </MudGrid>
@@ -22,9 +22,11 @@
     </DialogActions>
 </MudDialog>
 @code {
-        [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
+    [AllowNull, NotNull]
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [AllowNull, MaybeNull]
     private CareUnit SelectedCareUnit { get; set; }
+    [AllowNull, MaybeNull]
     private HospitalBed SelectedBed { get; set; }
 
 

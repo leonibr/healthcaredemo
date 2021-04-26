@@ -7,6 +7,7 @@ using FusionDemo.HealthCentral.Abstractions;
 using System.Collections.Generic;
 using FusionDemo.HealthCentral.Domain;
 using Stl.Fusion.Authentication;
+using System.Net.Http;
 
 namespace FusionDemo.HealthCentral.UI.Services
 {
@@ -71,4 +72,14 @@ namespace FusionDemo.HealthCentral.UI.Services
         Task AddNotification(string message);
     }
 
+    [RestEaseReplicaService(typeof(IRequestLoggingService), Scope = Program.ClientSideScope)]
+    [BasePath("logging")]
+    public interface IRequestLoggingClient
+    {
+        [Post]
+        Task<HttpResponseMessage> AddLoggingRecord([Body(serializationMethod: BodySerializationMethod.Serialized)] LoggingRecord loggingRecord);
+
+        [Get()]
+        Task<IEnumerable<LoggingRecord>> GetLatest(CancellationToken cancellationtoken);
+    }
 }

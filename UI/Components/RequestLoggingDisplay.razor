@@ -1,0 +1,41 @@
+﻿@inherits ComputedStateComponent<IEnumerable<LoggingRecord>>
+
+<h3>RequestLoggingDisplay</h3>
+
+<table>
+    @foreach(var record in Records)
+    {
+        <tr>
+            <td>@record.Method  @record.Path</td>
+            <td>@($"{record.Duration}ms")</td>
+        </tr>
+    }
+</table>
+@code {
+
+    [Inject]
+    protected IRequestLoggingService requestLoggingService { get; set; }
+
+    protected IEnumerable<LoggingRecord> Records => State.Value ?? Array.Empty<LoggingRecord>();
+
+    protected  override async Task<IEnumerable<LoggingRecord>> ComputeState(System.Threading.CancellationToken cancellationToken)
+    {
+        try
+        {
+            var records = await requestLoggingService.GetLatest(cancellationToken);
+
+            if (records == null)
+            {
+                return Array.Empty<LoggingRecord>();
+            }
+            return records;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+            throw;
+        }
+
+    }
+}

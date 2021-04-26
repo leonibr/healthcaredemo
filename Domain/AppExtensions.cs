@@ -26,5 +26,7 @@ namespace FusionDemo.HealthCentral.Domain
             var seconds = $"{timeSpan.Seconds} seconds.";
             return $"{days}{hours}{minutes}{seconds}";
         }
+
+        
     }
 }

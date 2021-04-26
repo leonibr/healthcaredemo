@@ -12,7 +12,7 @@ namespace FusionDemo.HealthCentral.Host.Controllers
 {
     [Route("api/[controller]")]
     [ApiController, JsonifyErrors]
-    public class NotificationController
+    public class NotificationController: ControllerBase
     {
         private readonly INotificationService notificationService;
 

@@ -1,4 +1,5 @@
-﻿<MudGrid>
+﻿@using System.Globalization
+<MudGrid>
     <MudItem sm="12">
         <MudPaper Class="pa-5">
             <MudGrid>
@@ -7,10 +8,6 @@
                     <MudText Typo="Typo.body2" Class="my-1">
                         Occupational Rate(%):
                     </MudText>
-                    @{
-
-
-                    }
                     <MudText Typo="Typo.h1" Class="@gradientColor(CareUnit.OccupationRate)">
                         @rateDisplay.intPart,<MudElement HtmlTag="span"
                                              Class="ma-0"
@@ -71,9 +68,9 @@
     }
     protected string gradientColor(double rate)
     {
-        if (rate <= 33)
+        if (rate <= 33d)
             return "rate-green";
-        if (rate <= 66)
+        if (rate <= 66d)
             return "rate-orange";
 
         return "rate-red";
@@ -82,7 +79,11 @@
     protected (string intPart, string decPart) RateDisplay(double rate)
     {
         // var rate = CareUnit.OccupationRate;
-        var arrParts = rate.ToString("0.00").Split(',');
+        var numberFormat = CultureInfo.CurrentCulture.NumberFormat;
+
+        string separator = numberFormat.NumberDecimalSeparator;
+
+        var arrParts = rate.ToString("n2").Split(separator, StringSplitOptions.TrimEntries);
 
         var intPart = arrParts[0] ?? "0";
         string decPart = "00";

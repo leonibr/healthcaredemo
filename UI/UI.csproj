@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -10,20 +10,18 @@
   <ItemGroup>
     <None Remove="Services\SendLoggingRecord.cs~RF359acb2.TMP" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.5" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.9" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="MudBlazor" Version="5.0.7" />
+    <PackageReference Include="MudBlazor" Version="5.1.0" />
     <PackageReference Include="Pluralize.NET" Version="1.0.2" />
-    <PackageReference Include="Stl.Fusion.Blazor" Version="1.0.4" />
-    <PackageReference Include="UAParser" Version="3.1.46" />
+    <PackageReference Include="Stl.Fusion.Blazor" Version="1.7.5" />
+    <PackageReference Include="Stl.Fusion.Client.RegisterAttributes" Version="1.7.5" />
+    <PackageReference Include="UAParser" Version="3.1.47" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
-
 </Project>

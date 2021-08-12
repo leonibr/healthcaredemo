@@ -12,8 +12,9 @@ namespace FusionDemo.HealthCentral.Services
     using Stl.Fusion;
     using System.Threading;
     using Stl.Async;
+    using Stl.RegisterAttributes;
 
-    [ComputeService(typeof(INotificationService))]
+    [RegisterService(typeof(INotificationService))]
     public class NotificationService : INotificationService
     {
         private ConcurrentQueue<AppNotification> queue = new ConcurrentQueue<AppNotification>();
@@ -21,7 +22,7 @@ namespace FusionDemo.HealthCentral.Services
         [ComputeMethod(KeepAliveTime = 1, AutoInvalidateTime = 1)]
         public virtual Task<AppNotification> GetNotification(CancellationToken  cancellationToken = default)
         {
-            var hasNotification = queue.TryDequeue(out AppNotification notification);
+            var hasNotification = queue.TryDequeue(out AppNotification? notification);
             if (hasNotification && notification != null)
             {
                 return Task.FromResult(notification);

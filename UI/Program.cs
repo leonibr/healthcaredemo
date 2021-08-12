@@ -17,6 +17,8 @@ using Stl.Fusion.Blazor;
 using FusionDemo.HealthCentral.Abstractions;
 using Stl.Fusion.Bridge;
 using FusionDemo.HealthCentral.UI.Services;
+using Stl.RegisterAttributes;
+using Stl.Fusion.UI;
 
 namespace FusionDemo.HealthCentral.UI
 {
@@ -46,16 +48,15 @@ namespace FusionDemo.HealthCentral.UI
             var apiBaseUri = new Uri($"{baseUri}api/");
            
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
-            // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
-            services.UseAttributeScanner(ClientSideScope)
-                .AddServicesFrom(Assembly.GetExecutingAssembly());
+            // [Service], RegisterService, [RestEaseReplicaService], [LiveStateUpdater]
+            services.UseRegisterAttributeScanner(ClientSideScope)
+                .RegisterFrom(Assembly.GetExecutingAssembly());
 
-            services.AddScoped<ISendLoggingRecord, SendLoggingRecord>();
             var fusion = services.AddFusion();
             var fusionClient = fusion.AddRestEaseClient(
                 (c, o) => {
                     o.BaseUri = baseUri;
-                    o.MessageLogLevel = LogLevel.Information;
+                    //o.= LogLevel.Information;
                     
                 })
                 .ConfigureHttpClientFactory(
@@ -89,13 +90,13 @@ namespace FusionDemo.HealthCentral.UI
 
             services.AddMudServices();
             // Default delay for update delayers
-            services.AddSingleton<IUpdateDelayer>(c => new UpdateDelayer(0.1));
+            services.AddSingleton<IUpdateDelayer>(c => new UpdateDelayer(c.UICommandTracker(), 0.5 ));
 
             services.AddSingleton<IPluralize, Pluralizer>();
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
-            // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
-            services.UseAttributeScanner().AddServicesFrom(Assembly.GetExecutingAssembly());
+            // [Service], RegisterService, [RestEaseReplicaService], [LiveStateUpdater]
+            services.UseRegisterAttributeScanner().RegisterFrom(Assembly.GetExecutingAssembly());
         }
     }
 }

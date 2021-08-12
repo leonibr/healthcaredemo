@@ -24,6 +24,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
         [Inject] [AllowNull, NotNull] IPatientService PatientService { get; set; }
         [Inject] [AllowNull, NotNull] ISnackbar Snackbar { get; set; }
         [Inject] [AllowNull, NotNull] ILogger<Painel> Logger { get; set; }
+        [Inject] [AllowNull, NotNull] IRequestLoggingService RequestLogging { get; set; }
  
         [Inject] [AllowNull, NotNull] IDialogService Dialog { get; set; }
         protected string draggingCss { get; set; } = "";
@@ -137,7 +138,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
         protected override void ConfigureState(ComputedState<PainelComposedValue>.Options options)
         {
-            options.UpdateDelayer = UpdateDelayer.MinUpdateDelay;
+            options.UpdateDelayer = UpdateDelayer.MinDelay;
 
 
         }
@@ -191,7 +192,11 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
                var ok = await PatientService.PutPatientOnBed(data.PatientId, data.HospitalBedId, data.CareUnitId);
                 if (!ok)
+                {
                     Snackbar.Add($"Could not put {patient?.Name} on bed {bed?.HospitalBedId}", Severity.Error);
+                    
+
+                }
 
 
             }

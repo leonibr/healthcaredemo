@@ -25,6 +25,7 @@ using Stl.Fusion.Blazor;
 using Stl.Fusion.Bridge;
 using Stl.Fusion.Client;
 using Stl.Fusion.Server;
+using Stl.RegisterAttributes;
 
 namespace FusionDemo.HealthCentral.Host
 {
@@ -75,10 +76,10 @@ namespace FusionDemo.HealthCentral.Host
            //  var fusionAuth = fusion.AddAuthentication().AddServer();
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
-            // [Service], [ComputeService], [RestEaseReplicaService], [LiveStateUpdater]
-            services.UseAttributeScanner()
-                .AddServicesFrom(typeof(TimeService).Assembly)
-                .AddServicesFrom(Assembly.GetExecutingAssembly());
+            // [Service], RegisterService, [RestEaseReplicaService], [LiveStateUpdater]
+            services.UseRegisterAttributeScanner()
+                .RegisterFrom(typeof(TimeService).Assembly)
+                .RegisterFrom(Assembly.GetExecutingAssembly());
             // Registering shared services from the client
             UI.Program.ConfigureSharedServices(services);
 

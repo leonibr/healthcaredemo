@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Stl.Fusion;
 using Stl.Fusion.Authentication;
+using Stl.RegisterAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.Services
 {
-    [ComputeService(typeof(IPainelComposerService))]
+    [RegisterService(typeof(IPainelComposerService))]
     public class PainelComposerService : IPainelComposerService
     {
         private readonly ITimeService timeService;

@@ -10,10 +10,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Stl.RegisterAttributes;
 
 namespace FusionDemo.HealthCentral.Services
 {
-    [ComputeService(typeof(IPatientService))]
+    [RegisterService(typeof(IPatientService))]
     public class PatientService : IPatientService
     {
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Stl.DependencyInjection;
 using Stl.Fusion;
+using Stl.RegisterAttributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.UI.Services
 {
-   [Service(Lifetime = ServiceLifetime.Transient, Scope = Program.ClientSideScope)]
+   [RegisterService(Lifetime = ServiceLifetime.Transient, Scope = Program.ClientSideScope)]
     public class LoggingHandler : DelegatingHandler
     {
 
@@ -46,7 +47,7 @@ namespace FusionDemo.HealthCentral.UI.Services
             };
 
            logger.LogWarning($"Request Logging {stopwatch.ElapsedMilliseconds}ms");
-           await sender.EnQuee(loggingRecord);
+           sender.EnQuee(loggingRecord);
             return response;
         }
     }

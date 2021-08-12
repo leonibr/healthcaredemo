@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 using Pluralize.NET;
 using Stl.Async;
 using Stl.Fusion;
+using Stl.RegisterAttributes;
 
 namespace FusionDemo.HealthCentral.UI.Services
 {
     // This service is local both on the server and on the client
-    [ComputeService]
+    [RegisterService]
     public class MomentsAgoService
     {
         private readonly IPluralize _pluralize;

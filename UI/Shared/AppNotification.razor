@@ -15,7 +15,7 @@
 
     protected override void ConfigureState(ComputedState<Domain.AppNotification>.Options options)
     {
-        options.UpdateDelayer = UpdateDelayer.Default;
+        options.UpdateDelayer = UpdateDelayer.ZeroDelay;
 
 
     }

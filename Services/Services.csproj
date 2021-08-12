@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="33.0.2" />
+    <PackageReference Include="Stl.RegisterAttributes" Version="1.7.5" />
   </ItemGroup>
 
   <ItemGroup>

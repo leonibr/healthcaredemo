@@ -17,8 +17,8 @@ using Stl.Fusion.Blazor;
 using FusionDemo.HealthCentral.Abstractions;
 using Stl.Fusion.Bridge;
 using FusionDemo.HealthCentral.UI.Services;
-using Stl.RegisterAttributes;
 using Stl.Fusion.UI;
+using Stl.Fusion.Extensions;
 
 namespace FusionDemo.HealthCentral.UI
 {
@@ -42,22 +42,25 @@ namespace FusionDemo.HealthCentral.UI
 
         public static void ConfigureServices(IServiceCollection services, WebAssemblyHostBuilder builder)
         {
-            builder.Logging.SetMinimumLevel(LogLevel.Warning);
+            builder.Logging.SetMinimumLevel(LogLevel.Trace);
 
             var baseUri = new Uri(builder.HostEnvironment.BaseAddress);
             var apiBaseUri = new Uri($"{baseUri}api/");
-           
+
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], RegisterService, [RestEaseReplicaService], [LiveStateUpdater]
-            services.UseRegisterAttributeScanner(ClientSideScope)
-                .RegisterFrom(Assembly.GetExecutingAssembly());
+            //services.UseRegisterAttributeScanner(ClientSideScope)
+            //    .RegisterFrom(Assembly.GetExecutingAssembly());
+         
 
             var fusion = services.AddFusion();
             var fusionClient = fusion.AddRestEaseClient(
                 (c, o) => {
                     o.BaseUri = baseUri;
-                    //o.= LogLevel.Information;
-                    
+                    o.IsLoggingEnabled = true;
+                    o.IsMessageLoggingEnabled = true;
+                    //LogLevel.Information;
+
                 })
                 .ConfigureHttpClientFactory(
                 (c, name, o) => {
@@ -65,21 +68,27 @@ namespace FusionDemo.HealthCentral.UI
                     var isFusionClient = (name ?? "").StartsWith("Stl.Fusion");
                     var clientBaseUri = isFusionClient ? baseUri : apiBaseUri;
                     o.HttpClientActions.Add(client => client.BaseAddress = clientBaseUri);                  
-                    o.HttpMessageHandlerBuilderActions.Add(handler =>
-                    {
-                        //using var scope = handler.Services.CreateScope();
+                //    o.HttpMessageHandlerBuilderActions.Add(handler =>
+                //    {
+                //        //using var scope = handler.Services.CreateScope();
                        
-                       var loggingHandler =  handler.Services.GetRequiredService<LoggingHandler>();
+                //       var loggingHandler =  handler.Services.GetRequiredService<LoggingHandler>();
                       
-                        Console.WriteLine("Got handler!!");
-                        handler.AdditionalHandlers.Add(loggingHandler);
+                //        Console.WriteLine("Got handler!!");
+                //        handler.AdditionalHandlers.Add(loggingHandler);
                        
                       
-                    });
+                //    });
                 })
                 
                 ;
-           // var fusionAuth = fusion.AddAuthentication().AddRestEaseClient().AddBlazor();
+            // var fusionAuth = fusion.AddAuthentication().AddRestEaseClient().AddBlazor();
+
+            fusionClient.AddReplicaService<ITimeService, ITimeClient>();
+            fusionClient.AddReplicaService<IPatientService, IPatientClient>();
+            fusionClient.AddReplicaService<INotificationService, INotificationClient>();
+            fusionClient.AddReplicaService<IRequestLoggingService, IRequestLoggingClient>();
+            fusionClient.AddReplicaService<IPainelComposerService, IPainelComposerClient>();
 
 
             ConfigureSharedServices(services);
@@ -89,6 +98,9 @@ namespace FusionDemo.HealthCentral.UI
         {
 
             services.AddMudServices();
+            var fusion = services.AddFusion();
+            fusion.AddFusionTime();
+
             // Default delay for update delayers
             services.AddSingleton<IUpdateDelayer>(c => new UpdateDelayer(c.UICommandTracker(), 0.5 ));
 
@@ -96,7 +108,7 @@ namespace FusionDemo.HealthCentral.UI
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], RegisterService, [RestEaseReplicaService], [LiveStateUpdater]
-            services.UseRegisterAttributeScanner().RegisterFrom(Assembly.GetExecutingAssembly());
+            //services.UseRegisterAttributeScanner().RegisterFrom(Assembly.GetExecutingAssembly());
         }
     }
 }

@@ -3,11 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Stl.Fusion;
 using FusionDemo.HealthCentral.Abstractions;
-using Stl.RegisterAttributes;
 
 namespace FusionDemo.HealthCentral.Services
 {
-    [RegisterService(typeof(ITimeService))]
+    //[RegisterService(typeof(ITimeService))]
     public class TimeService : ITimeService
     {
         [ComputeMethod(AutoInvalidateTime = 5, KeepAliveTime =60)]

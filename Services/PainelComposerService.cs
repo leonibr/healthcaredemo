@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Stl.Fusion;
 using Stl.Fusion.Authentication;
-using Stl.RegisterAttributes;
+//using Stl.RegisterAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.Services
 {
-    [RegisterService(typeof(IPainelComposerService))]
+    //[RegisterService(typeof(IPainelComposerService))]
     public class PainelComposerService : IPainelComposerService
     {
         private readonly ITimeService timeService;
@@ -27,6 +27,7 @@ namespace FusionDemo.HealthCentral.Services
         }
         public virtual async Task<PainelComposedValue> GetComposedValueAsync(string parameter, CancellationToken cancellationToken = default)
         {
+            logger.LogInformation("GetComposedValued started.");
             var timeValueTask = timeService.GetTimeAsync(cancellationToken);
             var availableUnitTask = patientService.GetAvailableUnits(cancellationToken);
             var waitingListTask = patientService.GetPatientWaitingList(cancellationToken);

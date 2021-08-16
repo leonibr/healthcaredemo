@@ -3,7 +3,7 @@ using FusionDemo.HealthCentral.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Stl.DependencyInjection;
-using Stl.RegisterAttributes;
+//using Stl.RegisterAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.UI.Services
 {
-    [RegisterService(typeof(ISendLoggingRecord), Lifetime = ServiceLifetime.Scoped, Scope = Program.ClientSideScope)]
+  //  [RegisterService(typeof(ISendLoggingRecord), Lifetime = ServiceLifetime.Scoped, Scope = Program.ClientSideScope)]
     public class SendLoggingRecord : ISendLoggingRecord
     {
         private readonly IServiceProvider provider;

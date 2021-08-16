@@ -19,13 +19,15 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.OpenApi.Models;
 using FusionDemo.HealthCentral.Services;
 using Stl.DependencyInjection;
+using Stl.Fusion.Operations.Reprocessing;
 using Stl.Fusion;
 using Stl.Fusion.Authentication;
 using Stl.Fusion.Blazor;
 using Stl.Fusion.Bridge;
 using Stl.Fusion.Client;
 using Stl.Fusion.Server;
-using Stl.RegisterAttributes;
+using Stl.Fusion.Extensions;
+using FusionDemo.HealthCentral.Abstractions;
 
 namespace FusionDemo.HealthCentral.Host
 {
@@ -43,6 +45,7 @@ namespace FusionDemo.HealthCentral.Host
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(new ServerSettings());
             services.AddResponseCompression(opts => {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                     new[] { "application/octet-stream" });
@@ -51,7 +54,7 @@ namespace FusionDemo.HealthCentral.Host
             services.AddLogging(logging => {
                 logging.ClearProviders();
                 logging.AddConsole();
-                logging.SetMinimumLevel(LogLevel.Information);
+                logging.SetMinimumLevel(LogLevel.Trace);
                 logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information);
             });
 
@@ -73,39 +76,30 @@ namespace FusionDemo.HealthCentral.Host
             var fusion = services.AddFusion();
             var fusionServer = fusion.AddWebServer();
             var fusionClient = fusion.AddRestEaseClient();
-           //  var fusionAuth = fusion.AddAuthentication().AddServer();
+            //  var fusionAuth = fusion.AddAuthentication().AddServer();
+            //fusion.AddSandboxedKeyValueStore();
+            //fusion.AddOperationReprocessor();
+
+            fusion.AddComputeService<ITimeService, TimeService>();
+            fusion.AddComputeService<IPainelComposerService, PainelComposerService>();
+            fusion.AddComputeService<INotificationService, NotificationService>();
+            fusion.AddComputeService<IPatientService, PatientService>();
+            fusion.AddComputeService<IRequestLoggingService, RequestLoggingService>();
 
             // This method registers services marked with any of ServiceAttributeBase descendants, including:
             // [Service], RegisterService, [RestEaseReplicaService], [LiveStateUpdater]
-            services.UseRegisterAttributeScanner()
-                .RegisterFrom(typeof(TimeService).Assembly)
-                .RegisterFrom(Assembly.GetExecutingAssembly());
+            //services.UseRegisterAttributeScanner()
+            //    .RegisterFrom(typeof(TimeService).Assembly)
+            //    .RegisterFrom(Assembly.GetExecutingAssembly());
             // Registering shared services from the client
             UI.Program.ConfigureSharedServices(services);
 
-            //services.AddAuthentication(options => {
-            //    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //}).AddCookie(options => {
-            //    options.LoginPath = "/signin";
-            //    options.LogoutPath = "/signout";
-            //}).AddGitHub(options => {
-            //    options.Scope.Add("read:user");
-            //    // options.Scope.Add("user:email");
-            //    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-            //});
-            // We want to get ClientId and ClientSecret from ServerSettings,
-            // and they're available only when IServiceProvider is already created,
-            // that's why this overload of Configure<TOptions> is used here.
-            //services.Configure<GitHubAuthenticationOptions>((c, name, options) => {
-            //    var serverSettings = c.GetRequiredService<ServerSettings>();
-            //    options.ClientId = serverSettings.GitHubClientId;
-            //    options.ClientSecret = serverSettings.GitHubClientSecret;
-            //});
 
             // Web
             services.AddRouting();
             services.AddMvc().AddApplicationPart(Assembly.GetExecutingAssembly());
             services.AddServerSideBlazor(o => o.DetailedErrors = true);
+          
             // fusionAuth.AddBlazor(o => { }); // Must follow services.AddServerSideBlazor()!
 
             // Swagger & debug tools
@@ -143,11 +137,13 @@ namespace FusionDemo.HealthCentral.Host
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
 
             app.UseWebSockets(new WebSocketOptions() {
                 KeepAliveInterval = TimeSpan.FromSeconds(30),
             });
+
             // app.UseFusionSession();
 
             // Static + Swagger

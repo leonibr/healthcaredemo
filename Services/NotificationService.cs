@@ -12,9 +12,9 @@ namespace FusionDemo.HealthCentral.Services
     using Stl.Fusion;
     using System.Threading;
     using Stl.Async;
-    using Stl.RegisterAttributes;
+    //using Stl.RegisterAttributes;
 
-    [RegisterService(typeof(INotificationService))]
+    //[RegisterService(typeof(INotificationService))]
     public class NotificationService : INotificationService
     {
         private ConcurrentQueue<AppNotification> queue = new ConcurrentQueue<AppNotification>();

@@ -11,7 +11,7 @@ using System.Net.Http;
 
 namespace FusionDemo.HealthCentral.UI.Services
 {
-    [RegisterRestEaseReplicaService(typeof(ITimeService), Scope = Program.ClientSideScope)]
+    //[RegisterRestEaseReplicaService(typeof(ITimeService), Scope = Program.ClientSideScope)]
     [BasePath("time")]
     public interface ITimeClient
     {
@@ -20,7 +20,7 @@ namespace FusionDemo.HealthCentral.UI.Services
     }
 
 
-    [RegisterRestEaseReplicaService(typeof(IPatientService), Scope = Program.ClientSideScope)]
+    //[RegisterRestEaseReplicaService(typeof(IPatientService), Scope = Program.ClientSideScope)]
     [BasePath("patient")]
     public interface IPatientClient 
     {
@@ -51,7 +51,7 @@ namespace FusionDemo.HealthCentral.UI.Services
     }
 
 
-    [RegisterRestEaseReplicaService(typeof(IPainelComposerService), Scope = Program.ClientSideScope)]
+    //[RegisterRestEaseReplicaService(typeof(IPainelComposerService), Scope = Program.ClientSideScope)]
     [BasePath("painel-composer")]
     public interface IPainelComposerClient
     {
@@ -61,7 +61,7 @@ namespace FusionDemo.HealthCentral.UI.Services
             CancellationToken cancellationToken = default);
     }
 
-    [RegisterRestEaseReplicaService(typeof(INotificationService), Scope = Program.ClientSideScope)]
+    //[RegisterRestEaseReplicaService(typeof(INotificationService), Scope = Program.ClientSideScope)]
     [BasePath("notification")]
     public interface INotificationClient
     {
@@ -72,7 +72,7 @@ namespace FusionDemo.HealthCentral.UI.Services
         Task AddNotification(string message);
     }
 
-    [RegisterRestEaseReplicaService(typeof(IRequestLoggingService), Scope = Program.ClientSideScope)]
+    //[RegisterRestEaseReplicaService(typeof(IRequestLoggingService), Scope = Program.ClientSideScope)]
     [BasePath("logging")]
     public interface IRequestLoggingClient
     {

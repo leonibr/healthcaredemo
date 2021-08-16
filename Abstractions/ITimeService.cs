@@ -7,7 +7,7 @@ namespace FusionDemo.HealthCentral.Abstractions
 {
     public interface ITimeService
     {
-        [ComputeMethod(KeepAliveTime = 1)]
+        [ComputeMethod]
         Task<DateTime> GetTimeAsync(CancellationToken cancellationToken = default);
     }
 }

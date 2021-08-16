@@ -3,7 +3,7 @@ using FusionDemo.HealthCentral.Domain;
 using Microsoft.Extensions.Logging;
 using Stl.Async;
 using Stl.Fusion;
-using Stl.RegisterAttributes;
+// using Stl.RegisterAttributes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FusionDemo.HealthCentral.Services
 {
-    [RegisterService(typeof(IRequestLoggingService))]
+   // [RegisterService(typeof(IRequestLoggingService))]
     public class RequestLoggingService: IRequestLoggingService
     {
         readonly ILogger<RequestLoggingService> logger;

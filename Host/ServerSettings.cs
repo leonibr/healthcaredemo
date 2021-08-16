@@ -1,11 +1,11 @@
 using System;
 using System.Text;
 using Stl.DependencyInjection;
-using Stl.RegisterAttributes;
+// using Stl.RegisterAttributes;
 
 namespace FusionDemo.HealthCentral.Host
 {
-    [RegisterSettings("Server")]
+    // //[RegisterSettings("Server")]
     public class ServerSettings
     {
         public string PublisherId { get; set; } = "p";

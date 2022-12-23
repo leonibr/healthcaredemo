@@ -44,7 +44,7 @@
     public bool IsUpdatePending => State == null! || State.Snapshot.Computed.IsInvalidated();
 
     public StatefulComponentState()
-        => _stateChangedHandler = (_1, _2) => this.StateHasChangedAsync().Ignore();
+        => _stateChangedHandler = async (_, _) => await this.StateHasChangedAsync();
 
     public virtual void Dispose()
         => State = null!;

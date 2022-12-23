@@ -9,6 +9,7 @@ namespace FusionDemo.HealthCentral.Domain
     public enum GenderType 
     {
         Male,
-        Female
+        Female,
+        Unknown
     }
 }

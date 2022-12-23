@@ -12,7 +12,7 @@ namespace FusionDemo.HealthCentral.Abstractions
     public interface INotificationService
     {
         Task AddNotification(string message);
-        [ComputeMethod(KeepAliveTime = 1, AutoInvalidateTime = 1)]
+        [ComputeMethod(MinCacheDuration = 5, AutoInvalidationDelay = 1)]
         Task<AppNotification> GetNotification(CancellationToken cancellationtoken);
     }
 }

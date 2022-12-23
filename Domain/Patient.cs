@@ -17,7 +17,33 @@ namespace FusionDemo.HealthCentral.Domain
         public TimeSpan Age => DateTime.Now.Subtract(DOB);
         public TimeSpan TimeInLine => DateTime.Now.Subtract(WaitingSince);
         public DateTime DOB { get; set; }
-        public DateTime WaitingSince { get; set; } = DateTime.Now;       
+        public DateTime WaitingSince { get; set; } = DateTime.Now;
+
+        public string Initials
+        {
+            get
+            {
+                if(string.IsNullOrWhiteSpace(Name))
+                    return string.Empty;
+
+                var arr = Name.Split(' ');
+                if (arr.Length == 1)
+                {
+                    return arr[0].ToUpperInvariant().First().ToString();
+                }
+
+                if (arr.Length >= 2)
+                {
+                    var first = arr[0].ToUpperInvariant().First().ToString();
+                    var second = arr[1].ToUpperInvariant().First().ToString();
+                    return first + second;
+                }
+
+                return string.Empty;
+
+
+            }
+        }
 
     }
 

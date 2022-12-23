@@ -1,7 +1,14 @@
 ﻿@page "/"
 @inject NavigationManager Navigator
 
-<MudText Typo="Typo.h4" Class="pb-3">FusionDemo HealthCare Central</MudText>
+
+<MudText Typo="Typo.h4" Class="pb-3">
+    @if (IsPrerendering)
+    {
+        <MudProgressCircular Color="Color.Secondary" Size="Size.Small" Indeterminate="true" />
+    }
+    FusionDemo HealthCare Central
+</MudText>
 <MudText Typo="Typo.h6" Class="pb-1">Start by open multiple windows and see all being updated accordingly</MudText>
 
 <MudText>Objective: simulate realtime administration of hospitals bed using Fusion library patterns</MudText>
@@ -10,7 +17,7 @@
     <MudListItem Icon="@Icons.Material.Outlined.Star">Operators can place or remove patients on hospital beds</MudListItem>
     <MudListItem Icon="@Icons.Material.Outlined.Star">Operators do not register patients to waiting list, to simulate new patient to the list click: "Add Patient.." </MudListItem>
     <MudListItem Icon="@Icons.Material.Outlined.Star">Operators get data pdated every 5 seconds or when invalidated by other operator</MudListItem>
-    
+
     <MudListItem Icon="@Icons.Material.Outlined.Star">Modify whatever you like!</MudListItem>
 </MudList>
 <MudText>
@@ -23,3 +30,9 @@
 </MudText>
 
 <MudText Typo="Typo.subtitle1">Go to <NavLink href="painel-sample">Manager Page</NavLink></MudText>
+
+
+@code {
+    [CascadingParameter(Name = "IsPrerendering")]
+    public bool IsPrerendering { get; set; }
+    }

@@ -1,14 +1,18 @@
 @page "/painel-sample"
 @using System.Threading
-
 @inherits PainelPage
 
 
 @{
-    var time = State.Value.ServerTime;
-    units = State.Value.AvailableUnits.ToList();
-    patients = State.Value.PatientsWaitingList.ToList(); ;
-    var error = State.Error;
+    DateTime time = DateTime.MinValue;
+    Exception? error = null;
+    if (State.HasValue)
+    {
+        time = State.Value?.ServerTime ?? time;
+        Units = State.Value?.AvailableUnits?.ToList() ?? new();
+        Patients = State.Value?.PatientsWaitingList?.ToList() ?? new();
+        error = State.Error;
+    }
 }
 <MudGrid>
     <MudItem xs="12" sm="4">
@@ -16,9 +20,6 @@
 
         <StatefulComponentState State="@State" />
         <WhenException Title="Update error:" Exception="@error" />
-
-
-
 
         <MudText Class="my-3">
             Server Time: @time
@@ -52,14 +53,14 @@
         <MudText Typo="Typo.h5" Class="pb-3">Data</MudText>
 
         <div class="mb-1">
-            <MudBadge Content="@(patients?.Count)" Color="Color.Primary" Overlap="true">
+            <MudBadge Content="@(Patients?.Count)" Color="Color.Primary" Overlap="true">
                 <MudText Typo="Typo.body1">
                     Patients wainting
                 </MudText>
             </MudBadge>
         </div>
         <div class="mb-1">
-            <MudBadge Content="@(units?.SelectMany(c => c.HospitalBeds).Where(h => h.IsFree).Count())" Color="Color.Primary" Overlap="true">
+            <MudBadge Content="@(Units?.SelectMany(c => c.HospitalBeds).Where(h => h.IsFree).Count())" Color="Color.Primary" Overlap="true">
                 <MudText Typo="Typo.body1" Class="mb-1">
                     Total Free Hospital Beds
                 </MudText>
@@ -74,16 +75,16 @@
 <MudGrid Spacing="4" Style="margin-top: 10px;">
     <MudItem xs="12" sm="3">
 
-        @if (patients?.Count() > 0)
+        @if (Patients?.Count() > 0)
         {
             <MudCard>
                 <MudCardHeader>
                     <CardHeaderContent>
                         <MudText Typo="Typo.h6">
-                            Patient waiting list (@patients.Count())
+                            Patient waiting list (@Patients.Count())
                         </MudText>
 
-                    
+
                     </CardHeaderContent>
                     <CardHeaderActions>
 
@@ -125,33 +126,41 @@
 
                 <Virtualize Context="p" Items="@OrderedPatientList" OverscanCount="5">
                     <div ondragover="event.preventDefault();"
-                         ondragstart="event.dataTransfer.setData('', event.target.id);">
+                     ondragstart="event.dataTransfer.setData('', event.target.id);">
                         <MudCard draggable="true"
-                                 Class="@(p.PatientId == DragPatient?.PatientId ? draggingCss : "")"
-                                 @ondragstart="@(() => HandleDragStart(p))" @ondragend="@HandleDragEnd">
+                             Class="@(p.PatientId == DragPatient?.PatientId ? DraggingCss : "")"
+                             @ondragstart="@(() => HandleDragStart(p))" @ondragend="@HandleDragEnd">
 
                             <MudCardHeader>
                                 <CardHeaderAvatar>
-                                    <MudAvatar Color="Color.Primary">@p.Name.Substring(0, 1).ToUpperInvariant()</MudAvatar>
-                                </CardHeaderAvatar>
-                                <CardHeaderContent>
-                                    <MudText Typo="Typo.body1">@($"{p.Name} , ")<GenderDisplay Gender="p.Gender" /></MudText>
-                                    <MudText Typo="Typo.caption">Age: @(p.Age.ToAgeString())</MudText>
-                                    <MudText Typo="Typo.caption">Waiting for @(p.TimeInLine.ToTimeInLineString())</MudText>
+                                    <div style="display:flex; flex-direction:column; justify-content: center; align-items: center">
 
-                                </CardHeaderContent>
-                                <CardHeaderActions>
-                                    <MudIconButton Icon="@Icons.Material.Outlined.Settings" Color="Color.Default" OnClick="@(() => PutPatient(p))" />
-                                </CardHeaderActions>
-                            </MudCardHeader>
+                                        <MudAvatar Color="@(p.Gender == GenderType.Male ? Color.Primary : Color.Secondary)">@(p.Initials)</MudAvatar>
+                                        <MudSpacer  />
+                                        <GenderDisplay Gender="p.Gender"></GenderDisplay>
+                                    </div>
 
 
 
-                        </MudCard>
-                    </div>
-                    <div style="margin-top:12px" />
-                </Virtualize>
-            </div>
+                                    </CardHeaderAvatar>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.body1">@(p.Name)</MudText>
+                                        <MudText Typo="Typo.caption">Age: @(p.Age.ToAgeString())</MudText>
+                                        <MudText Typo="Typo.caption">Waiting for @(p.TimeInLine.ToTimeInLineString())</MudText>
+
+                                    </CardHeaderContent>
+                                    <CardHeaderActions>
+                                        <MudIconButton Icon="@Icons.Material.Outlined.Settings" Color="Color.Default" OnClick="@(() => PutPatient(p))" />
+                                    </CardHeaderActions>
+                                </MudCardHeader>
+
+
+
+                            </MudCard>
+                        </div>
+                        <div style="margin-top:12px" />
+                    </Virtualize>
+                </div>
 
 
 
@@ -168,12 +177,12 @@
 
 
     <MudItem xs="12" sm="3">
-        @if (units.Count() > 0)
+        @if (Units.Count() > 0)
         {
             <MudText Typo="Typo.body2">
                 Order by Number of free beds descending.
             </MudText>
-            @foreach (var u in units)
+            @foreach (var u in Units)
             {
 
 
@@ -190,7 +199,7 @@
 
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudProgressLinear  Value="@((u.FreeBeds/ u.Capacity) * 100)"/>
+                        <MudProgressLinear Value="@((u.FreeBeds/ u.Capacity) * 100)" />
                         <MudText Typo="Typo.body2">Free Beds: @u.FreeBeds.</MudText>
                         <MudText Typo="Typo.body2">Total Capacity: @u.Capacity.</MudText>
                     </MudCardContent>
@@ -235,7 +244,7 @@
         }
     </MudItem>
     <MudItem xs="6">
-      @*  <RequestLoggingDisplay />*@
+        @*  <RequestLoggingDisplay />*@
     </MudItem>
 </MudGrid>
 

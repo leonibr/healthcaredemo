@@ -23,12 +23,12 @@ namespace FusionDemo.HealthCentral.Services
         {
             this.logger = logger;
         }
-        public Task AddLoggingRecord(LoggingRecord loggingRecord)
+        public async Task AddLoggingRecord(LoggingRecord loggingRecord)
         {
             database.Add(loggingRecord);
             using (Computed.Invalidate())
-                GetLatest().Ignore();
-            return Task.CompletedTask;
+                await GetLatest();
+           
         }
 
         [ComputeMethod]

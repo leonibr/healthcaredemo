@@ -2,7 +2,7 @@
 @inject IDialogService Dialog
 @inject NavigationManager Navigation
 
-<MudThemeProvider Theme="@CurrentTheme"/>
+<MudThemeProvider Theme="@CurrentTheme" />
 <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
 <MudSnackbarProvider />
 <AppNotification />
@@ -11,7 +11,7 @@
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
         <MudText Typo="Typo.h5" Class="ml-3">Fusion+MudBlazor HealthCare Central Sample</MudText>
-        <MudAppBarSpacer/>
+        <MudSpacer />
         <MudTooltip Text="Toggle light/dark theme">
             <MudIconButton Icon="@Icons.Material.Outlined.Brightness4" Color="Color.Inherit" OnClick="@ThemeToggle" />
         </MudTooltip>

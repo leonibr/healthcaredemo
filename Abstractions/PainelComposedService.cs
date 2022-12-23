@@ -18,7 +18,7 @@ namespace FusionDemo.HealthCentral.Abstractions
     }
     public interface IPainelComposerService
     {
-        [ComputeMethod(KeepAliveTime = 1)]
+        [ComputeMethod(MinCacheDuration = 1)]
         Task<PainelComposedValue> GetComposedValueAsync(string parameter, CancellationToken cancellationToken = default);
     }
 

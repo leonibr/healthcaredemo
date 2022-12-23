@@ -13,17 +13,15 @@
         base.OnInitialized();
     }
 
-    protected override void ConfigureState(ComputedState<Domain.AppNotification>.Options options)
-    {
-        options.UpdateDelayer = UpdateDelayer.ZeroDelay;
+    protected override ComputedState<Domain.AppNotification>.Options GetStateOptions()
+        => new()
+            {
+                InitialValue = new(),
+                UpdateDelayer = FixedDelayer.Get(0.5),
+            };
 
 
-    }
-
-
-
-
-        protected override async Task<Domain.AppNotification> ComputeState(System.Threading.CancellationToken cancellationToken)
+    protected override async Task<Domain.AppNotification> ComputeState(System.Threading.CancellationToken cancellationToken)
     {
         var notification = await NotificationService.GetNotification(cancellationToken);
         if (CurrentNotificaion != null && notification != null)

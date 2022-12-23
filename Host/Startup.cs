@@ -28,6 +28,7 @@ using Stl.Fusion.Client;
 using Stl.Fusion.Server;
 using Stl.Fusion.Extensions;
 using FusionDemo.HealthCentral.Abstractions;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace FusionDemo.HealthCentral.Host
 {
@@ -70,12 +71,13 @@ namespace FusionDemo.HealthCentral.Host
             // Fusion services
             services.AddSingleton(c => {
                 var serverSettings = c.GetRequiredService<ServerSettings>();
-                return new Publisher.Options() { Id = serverSettings.PublisherId };
+                return new PublisherOptions() { Id = serverSettings.PublisherId };
             });
-            services.AddSingleton(new PresenceService.Options() { UpdatePeriod = TimeSpan.FromMinutes(1) });
+            services.AddSingleton(new PresenceReporter.Options() { UpdatePeriod = TimeSpan.FromMinutes(1) });
             var fusion = services.AddFusion();
-            var fusionServer = fusion.AddWebServer();
             var fusionClient = fusion.AddRestEaseClient();
+            var fusionServer = fusion.AddWebServer();
+            fusion.AddBlazorUIServices();
             //  var fusionAuth = fusion.AddAuthentication().AddServer();
             //fusion.AddSandboxedKeyValueStore();
             //fusion.AddOperationReprocessor();
@@ -96,11 +98,16 @@ namespace FusionDemo.HealthCentral.Host
 
 
             // Web
+            services.Configure<ForwardedHeadersOptions>(options => {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
             services.AddRouting();
             services.AddMvc().AddApplicationPart(Assembly.GetExecutingAssembly());
             services.AddServerSideBlazor(o => o.DetailedErrors = true);
           
-            // fusionAuth.AddBlazor(o => { }); // Must follow services.AddServerSideBlazor()!
+           // fusionAuth.AddBlazor(o => { }); // Must follow services.AddServerSideBlazor()!
 
             // Swagger & debug tools
             services.AddSwaggerGen(c => {
@@ -124,7 +131,7 @@ namespace FusionDemo.HealthCentral.Host
             if (!Directory.Exists(Path.Combine(wwwRootPath, "_framework")))
                 // This is a regular build, not a build produced w/ "publish",
                 // so we remap wwwroot to the client's wwwroot folder
-                wwwRootPath = Path.GetFullPath(Path.Combine(baseDir, $"../../../../UI/{binCfgPart}/net5.0/wwwroot"));
+                wwwRootPath = Path.GetFullPath(Path.Combine(baseDir, $"../../../../UI/{binCfgPart}/net7.0/wwwroot"));
             Env.WebRootPath = wwwRootPath;
             Env.WebRootFileProvider = new PhysicalFileProvider(Env.WebRootPath);
             StaticWebAssetsLoader.UseStaticWebAssets(Env, Cfg);
@@ -139,6 +146,10 @@ namespace FusionDemo.HealthCentral.Host
             }
 
             app.UseHttpsRedirection();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+            });
 
             app.UseWebSockets(new WebSocketOptions() {
                 KeepAliveInterval = TimeSpan.FromSeconds(30),

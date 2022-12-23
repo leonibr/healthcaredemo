@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 as build
 WORKDIR /build-dir
 COPY [".",  "." ]
 RUN dotnet build -c:Debug

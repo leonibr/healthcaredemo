@@ -1,0 +1,36 @@
+﻿
+.container {
+    padding: 8px;
+}
+
+.linear-progress {
+    background: silver;
+    width: 100%;
+    margin: 8px auto;
+    height: 1rem;
+    border-radius: 10rem;
+    overflow: hidden;
+    position: relative;
+}
+
+    .linear-progress:after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: #ba27c4;
+        scale: var(--blazor-load-percentage, 0%) 100%;
+        transform-origin: left top;
+        transition: scale ease-out 0.5s;
+    }
+
+.loading-progress-text {
+    color: #fff;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+}
+
+    .loading-progress-text:after {
+        content: var(--blazor-load-percentage-text, "Loading");
+    }

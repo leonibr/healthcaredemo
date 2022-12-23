@@ -16,7 +16,7 @@ namespace FusionDemo.HealthCentral.UI.Services
         public MomentsAgoService(IPluralize pluralize) => _pluralize = pluralize;
 
         [ComputeMethod]
-        public virtual Task<string> GetMomentsAgoAsync(DateTime time)
+        public virtual async Task<string> GetMomentsAgoAsync(DateTime time)
         {
             var delta = DateTime.UtcNow - time.ToUniversalTime();
             if (delta < TimeSpan.Zero)
@@ -29,9 +29,9 @@ namespace FusionDemo.HealthCentral.UI.Services
             // Invalidate the result when it's supposed to change
             var delay = (unitCount + 1) * unit - delta;
             var computed = Computed.GetCurrent();
-            Task.Delay(delay, default).ContinueWith(_ => computed!.Invalidate()).Ignore();
+            await Task.Delay(delay, default).ContinueWith(_ => computed!.Invalidate());
 
-            return Task.FromResult(result);
+            return result;
         }
 
         public static (TimeSpan Unit, string UnitName) GetMomentsAgoUnit(TimeSpan delta)

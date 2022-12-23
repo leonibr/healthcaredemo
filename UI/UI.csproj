@@ -1,26 +1,46 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
-    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
-    <RootNamespace>FusionDemo.HealthCentral.UI</RootNamespace>
-    <AssemblyName>FusionDemo.HealthCentral.UI</AssemblyName>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Services\SendLoggingRecord.cs~RF359acb2.TMP" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.9" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="MudBlazor" Version="5.1.0" />
-    <PackageReference Include="Pluralize.NET" Version="1.0.2" />
-    <PackageReference Include="Stl.Fusion.Blazor" Version="1.8.8" />
-    <PackageReference Include="UAParser" Version="3.1.47" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+		<RootNamespace>FusionDemo.HealthCentral.UI</RootNamespace>
+		<AssemblyName>FusionDemo.HealthCentral.UI</AssemblyName>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Services\SendLoggingRecord.cs~RF359acb2.TMP" />
+	</ItemGroup>
+
+
+	<!-- Publish & runtime properties -->
+	<PropertyGroup>
+		<RunAOTCompilation>false</RunAOTCompilation>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<TrimMode>partial</TrimMode>
+		<BlazorWebAssemblyEnableLinking>false</BlazorWebAssemblyEnableLinking>
+	</PropertyGroup>
+
+	<!-- Extra trimming roots -->
+	<ItemGroup>
+		<TrimmerRootAssembly Include="System.Security.Cryptography.X509Certificates" />
+		<TrimmerRootAssembly Include="System.Text.Json" />
+		<TrimmerRootAssembly Include="System.Collections.Immutable" />
+		<TrimmerRootAssembly Include="FusionDemo.HealthCentral.UI" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="MudBlazor" Version="6.1.5" />
+		<PackageReference Include="Pluralize.NET" Version="1.0.2" />
+		<PackageReference Include="Stl.Fusion.Blazor" Version="4.1.38" />
+		<PackageReference Include="UAParser" Version="3.1.47" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Abstractions\Abstractions.csproj" />
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+	</ItemGroup>
 </Project>

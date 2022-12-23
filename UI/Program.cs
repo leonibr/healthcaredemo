@@ -33,9 +33,8 @@ namespace FusionDemo.HealthCentral.UI
 
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             ConfigureServices(builder.Services, builder);
-            builder.RootComponents.Add<App>("#app");
+            // builder.RootComponents.Add<App>("#app");
             var host = builder.Build();
-
             host.Services.HostedServices().Start();
             return host.RunAsync();
         }
@@ -54,35 +53,20 @@ namespace FusionDemo.HealthCentral.UI
          
 
             var fusion = services.AddFusion();
-            var fusionClient = fusion.AddRestEaseClient(
-                (c, o) => {
-                    o.BaseUri = baseUri;
-                    o.IsLoggingEnabled = true;
-                    o.IsMessageLoggingEnabled = true;
-                    //LogLevel.Information;
+            var fusionClient = fusion.AddRestEaseClient();
+            fusionClient.ConfigureWebSocketChannel(c => new()
+            {
+                BaseUri = baseUri,
+                LogLevel = LogLevel.Information,
+                MessageLogLevel = LogLevel.Trace,
+            });
+            fusionClient.ConfigureHttpClient((c, name, o) => {
+                var isFusionClient = (name ?? "").StartsWith("Stl.Fusion");
+                var clientBaseUri = isFusionClient ? baseUri : apiBaseUri;
+                o.HttpClientActions.Add(client => client.BaseAddress = clientBaseUri);
+            });
 
-                })
-                .ConfigureHttpClientFactory(
-                (c, name, o) => {
-                   
-                    var isFusionClient = (name ?? "").StartsWith("Stl.Fusion");
-                    var clientBaseUri = isFusionClient ? baseUri : apiBaseUri;
-                    o.HttpClientActions.Add(client => client.BaseAddress = clientBaseUri);                  
-                //    o.HttpMessageHandlerBuilderActions.Add(handler =>
-                //    {
-                //        //using var scope = handler.Services.CreateScope();
-                       
-                //       var loggingHandler =  handler.Services.GetRequiredService<LoggingHandler>();
-                      
-                //        Console.WriteLine("Got handler!!");
-                //        handler.AdditionalHandlers.Add(loggingHandler);
-                       
-                      
-                //    });
-                })
-                
-                ;
-            // var fusionAuth = fusion.AddAuthentication().AddRestEaseClient().AddBlazor();
+            fusion.AddBlazorUIServices();
 
             fusionClient.AddReplicaService<ITimeService, ITimeClient>();
             fusionClient.AddReplicaService<IPatientService, IPatientClient>();
@@ -100,9 +84,9 @@ namespace FusionDemo.HealthCentral.UI
             services.AddMudServices();
             var fusion = services.AddFusion();
             fusion.AddFusionTime();
-
+            fusion.AddBackendStatus();
             // Default delay for update delayers
-            services.AddSingleton<IUpdateDelayer>(c => new UpdateDelayer(c.UICommandTracker(), 0.5 ));
+            services.AddTransient<IUpdateDelayer>(c => new UpdateDelayer(c.UIActionTracker(), 0.1 ));
 
             services.AddSingleton<IPluralize, Pluralizer>();
 

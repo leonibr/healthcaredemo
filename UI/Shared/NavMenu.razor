@@ -1,24 +1,36 @@
 @using Stl.OS
-<MudText Typo="Typo.subtitle1" Class="pa-4">
-    @if (IsBlazorServer)
-    {
-        <span>Blazor Server side</span>
-    }
-    else
-    {
-        <span>Blazor Webassembly</span>
-    }
-</MudText>
-<MudNavMenu>
+@if (IsPrerendering)
+{
+    <div class="container">
+        <div class="loading-progress-text"></div>
+        <div class="linear-progress"></div>
+    </div>
 
-    <MudDivider />
-    <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
-    <MudNavLink Href="/painel-sample" Match="NavLinkMatch.All">Manage Hosptial Beds</MudNavLink>
-    <MudDivider />
-    <MudNavLink Href="https://github.com/leonibr/healthcaredemo" target="_blank">Source &amp; GitHub</MudNavLink>
-</MudNavMenu>
+}
+else
+{
+    <MudText Typo="Typo.subtitle1" Class="pa-4">
+        @if (IsBlazorServer)
+        {
+            <span>Blazor Server side</span>
+        }
+        else
+        {
+            <span>Blazor Webassembly</span>
+        }
+    </MudText>
+    <MudNavMenu>
+        <MudDivider />
+        <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+        <MudNavLink Href="/painel-sample" Match="NavLinkMatch.All">Manage Hosptial Beds</MudNavLink>
+        <MudDivider />
+        <MudNavLink Href="https://github.com/leonibr/healthcaredemo" target="_blank">Source &amp; GitHub</MudNavLink>
+    </MudNavMenu>
+}
 
 
 @code {
     private static bool IsBlazorServer => OSInfo.Kind != OSKind.WebAssembly;
+    [CascadingParameter(Name = "IsPrerendering")]
+    public bool IsPrerendering { get; set; }
 } 

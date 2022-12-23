@@ -24,21 +24,19 @@ namespace FusionDemo.HealthCentral.UI.Pages
         [Inject] [AllowNull, NotNull] IPatientService PatientService { get; set; }
         [Inject] [AllowNull, NotNull] ISnackbar Snackbar { get; set; }
         [Inject] [AllowNull, NotNull] ILogger<Painel> Logger { get; set; }
-        [Inject] [AllowNull, NotNull] IRequestLoggingService RequestLogging { get; set; }
- 
+        [Inject] [AllowNull, NotNull] IRequestLoggingService RequestLogging { get; set; } 
         [Inject] [AllowNull, NotNull] IDialogService Dialog { get; set; }
-        protected string draggingCss { get; set; } = "";
+        protected string DraggingCss { get; set; } = "";
 
         [AllowNull]
         protected Patient DragPatient { get; set; } = null;
 
 
-        protected IList<Patient> patients { get; set; } = new List<Patient>();
-        protected IList<CareUnit> units { get; set; } = new List<CareUnit>();
+        protected IList<Patient> Patients { get; set; } = new List<Patient>();
+        protected IList<CareUnit> Units { get; set; } = new List<CareUnit>();
 
-        protected IList<Patient> OrderedPatientList  => filterPatient(patients);
-
-        protected string[] labels = { "Free", "Occuppied" };
+        protected IList<Patient> OrderedPatientList  => filterPatient(Patients);
+               
         public string SelectedFilterPatient { get; set; } = "2";
         public CareUnit SelectedCareUnit { get; set; } = null!;
 
@@ -56,7 +54,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
         protected void HandleDragStart(Patient dragPatient)
         {
-            draggingCss = "dragging-start";
+            DraggingCss = "dragging-start";
             InvokeAsync(() => DragPatient = dragPatient);
             Console.WriteLine($"HandleDragStart Patient {DragPatient.Name}");
 
@@ -66,7 +64,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
         protected void HandleDragEnd(DragEventArgs e)
         {
             Console.WriteLine("HandleDragEnd");
-            draggingCss = "";
+            DraggingCss = "";
         }
 
         public async Task HandleDrop(HospitalBed bed)
@@ -136,12 +134,16 @@ namespace FusionDemo.HealthCentral.UI.Pages
             base.OnInitialized();
         }
 
-        protected override void ConfigureState(ComputedState<PainelComposedValue>.Options options)
+        protected override ComputedState<PainelComposedValue>.Options GetStateOptions()
         {
-            options.UpdateDelayer = UpdateDelayer.MinDelay;
 
-
+            return base.GetStateOptions();
         }
+
+        //protected override void ComputeState(ComputedState<PainelComposedValue>.Options options)
+        //{
+        // //    options.UpdateDelayer = new UpdateDelayer();
+        //}
         protected void SelectUnit([AllowNull, MaybeNull] CareUnit unit)
         {
 
@@ -174,8 +176,6 @@ namespace FusionDemo.HealthCentral.UI.Pages
 
 
 
-
-
         public async Task PutPatient(Patient patient, [AllowNull, MaybeNull] HospitalBed bed = null)
         {
             var parameters = new DialogParameters();
@@ -193,8 +193,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
                var ok = await PatientService.PutPatientOnBed(data.PatientId, data.HospitalBedId, data.CareUnitId);
                 if (!ok)
                 {
-                    Snackbar.Add($"Could not put {patient?.Name} on bed {bed?.HospitalBedId}", Severity.Error);
-                    
+                    Snackbar.Add($"Could not put {patient?.Name} on bed {bed?.HospitalBedId}", Severity.Error);                  
 
                 }
 
@@ -210,7 +209,7 @@ namespace FusionDemo.HealthCentral.UI.Pages
             parameters.Add("units", State.Value.AvailableUnits);
             parameters.Add("preSelectedBed", bed);
 
-            var dialog = Dialog.Show<PainelDialogs.DischargePatient>($"Discharge Patient: {patient.Name}", parameters, new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true });
+            var dialog = await Dialog.ShowAsync<PainelDialogs.DischargePatient>($"Discharge Patient: {patient.Name}", parameters, new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true });
             var result = await dialog.Result;
 
             if (!result.Cancelled)
@@ -221,7 +220,10 @@ namespace FusionDemo.HealthCentral.UI.Pages
                     patientId: data.PatientId,
                     hospitalBedId: data.HospitalBedId,
                     careUnitId: data.CareUnitId);
-                if (!ok)
+                var currentUnit = Units.Where(b => b.HospitalBeds.Any(b => b.HospitalBedId == bed?.HospitalBedId)).Select(u => u.Name).FirstOrDefault();
+                if (ok)
+                    Snackbar.Add($"Patient: {patient?.Name} left bed {bed?.HospitalBedId} from {currentUnit}", Severity.Success);
+                else
                     Snackbar.Add($"Could not discharge {patient?.Name} on bed {bed?.HospitalBedId}", Severity.Error);
 
 

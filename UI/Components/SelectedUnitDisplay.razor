@@ -10,33 +10,33 @@
                     </MudText>
                     <MudText Typo="Typo.h1" Class="@gradientColor(CareUnit.OccupationRate)">
                         @rateDisplay.intPart,<MudElement HtmlTag="span"
-                                             Class="ma-0"
-                                             Style="font-size: 2rem;">@rateDisplay.decPart</MudElement>%
-                                        </MudText>
-                                    </MudItem>
-                                    <MudItem xs="12" sm="6">
-                                        <MudChart ChartType="ChartType.Pie" InputData="@(new double[] { CareUnit.FreeBeds, CareUnit.Capacity - CareUnit.FreeBeds })" InputLabels="@labels" Width="100px" Height="100px" />
+                                                         Class="ma-0"
+                                                         Style="font-size: 2rem;">@rateDisplay.decPart</MudElement>%
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudChart ChartType="ChartType.Pie" InputData="@(new double[] { CareUnit.FreeBeds, CareUnit.Capacity - CareUnit.FreeBeds })" InputLabels="@labels" Width="100px" Height="100px" />
 
-                                    </MudItem>
-                                </MudGrid>
-                            </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
 
-                        </MudItem>
+    </MudItem>
 
-                        <MudItem xs="12" sm="6">
-                            @foreach (var bed in LeftColumn)
-                            {
-                                <BedDisplay Bed="bed" OnDischargeClicked="@HandleDischargeClick" OnDroppedBed="HandleOnDrop" />
-                            }
-                        </MudItem>
+    <MudItem xs="12" sm="6">
+        @foreach (var bed in LeftColumn)
+        {
+            <BedDisplay Bed="bed" OnDischargeClicked="@HandleDischargeClick" OnDroppedBed="HandleOnDrop" />
+        }
+    </MudItem>
 
-                        <MudItem xs="12" sm="6">
-                            @foreach (var bed in RightColumn)
-                            {
-                                <BedDisplay Bed="bed" OnDischargeClicked="@HandleDischargeClick" OnDroppedBed="HandleOnDrop" />
-                            }
-                        </MudItem>
-                    </MudGrid>
+    <MudItem xs="12" sm="6">
+        @foreach (var bed in RightColumn)
+        {
+            <BedDisplay Bed="bed" OnDischargeClicked="@HandleDischargeClick" OnDroppedBed="HandleOnDrop" />
+        }
+    </MudItem>
+</MudGrid>
 
 @code {
     [Parameter]

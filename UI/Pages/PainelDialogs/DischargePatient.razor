@@ -2,7 +2,6 @@
 
 <MudDialog>
     <DialogContent>
-
         <MudTextField Value="@patient.PatientId" Label="Patient Id" ReadOnly="true" />
         <MudTextField Value="@patient.Name" Label="Patient Name" ReadOnly="true" />
         <MudTextField Value="@patient.DOB" Label="Date of Birfth" ReadOnly="true" />
@@ -13,7 +12,6 @@
             <MudItem sm="6">
                 <MudTextField Value="@($"Code: {SelectedBed?.HospitalBedId}")" Label="Bed Code" ReadOnly="true" />      
             </MudItem>
-
         </MudGrid>
     </DialogContent>
     <DialogActions>

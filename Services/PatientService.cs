@@ -160,7 +160,7 @@ namespace FusionDemo.HealthCentral.Services
             return Task.CompletedTask;
         }   
         
-        public Task EmptyHospitalBeds(CancellationToken cancellation = default)
+        public async Task EmptyHospitalBeds(CancellationToken cancellation = default)
         {
             notificationService.AddNotification($"Some user has just reset the Hospital beds");
             careUnits.Values.ToList().ForEach(c =>
@@ -173,18 +173,17 @@ namespace FusionDemo.HealthCentral.Services
             });
 
             using (Computed.Invalidate())
-                GetAvailableUnits(cancellation).Ignore();
-            return Task.CompletedTask;
+                await GetAvailableUnits(cancellation);
         }
 
 
         // public void AddPatientToWaitingList(Patient patient, CancellationToken cancellationToken = default)
-        public Task AddPatientToWaitingList(CancellationToken cancellationToken = default)
+        public async Task AddPatientToWaitingList(CancellationToken cancellationToken = default)
         {
             if (waitingList.Count >= 50)
             {
-                notificationService.AddNotification($"Waiting List limit reached!");
-                return Task.CompletedTask;
+                await notificationService.AddNotification($"Waiting List limit reached!");
+                return;
             }
 
          
@@ -194,13 +193,12 @@ namespace FusionDemo.HealthCentral.Services
 
             waitingList.TryAdd(patient.PatientId, patient);
             using (Computed.Invalidate())
-                GetPatientWaitingList();
-            notificationService.AddNotification($"New Patient to waiting list\n{patient.Name}");
-            return Task.CompletedTask;
+                await GetPatientWaitingList(cancellationToken);
+            await notificationService.AddNotification($"New Patient to waiting list\n{patient.Name}");
 
         }
 
-        public Task<bool> PutPatientOnBed(Guid patientId, int hospitalBedId, int careUnitId, CancellationToken cancellationToken = default)
+        public async Task<bool> PutPatientOnBed(Guid patientId, int hospitalBedId, int careUnitId, CancellationToken cancellationToken = default)
         {
 
             var unitExists = careUnits.TryGetValue(careUnitId, out CareUnit careUnit);
@@ -208,36 +206,36 @@ namespace FusionDemo.HealthCentral.Services
 
             if (unitExists && patientExists)
             {
-                var bed = careUnit.HospitalBeds.Where(b => b.HospitalBedId == hospitalBedId).FirstOrDefault();
+                var bed = careUnit!.HospitalBeds.Where(b => b.HospitalBedId == hospitalBedId).FirstOrDefault();
                 if (bed != null && bed.IsFree)
                 {
                     bed.Patient = patient;
                     bed.OccupiedSince = DateTime.Now;
 
                     using (Computed.Invalidate())
-                        GetAvailableUnits(cancellationToken).Ignore();
+                        await GetAvailableUnits(cancellationToken);
 
-                    var removed = waitingList.TryRemove(patient.PatientId, out Patient removedPatient);
+                    var removed = waitingList.TryRemove(patient!.PatientId, out Patient removedPatient);
                     if (removed)
                     {
                         using (Computed.Invalidate())
-                            GetPatientWaitingList(cancellationToken).Ignore();
+                            await GetPatientWaitingList(cancellationToken);
                     }
-                    return Task.FromResult(removed);
+                    return removed;
                 }
                 else
                 {
-                    return Task.FromResult(false);
+                    return false;
                 }
             }
-            return Task.FromResult(false);
+            return false;
 
 
 
 
         }
 
-        public Task<bool> DischargePatientFromBed(Guid patientId, int hospitalBedId, int careUnitId, CancellationToken cancellationToken = default)
+        public async Task<bool> DischargePatientFromBed(Guid patientId, int hospitalBedId, int careUnitId, CancellationToken cancellationToken = default)
         {
 
             var unitExists = careUnits.TryGetValue(careUnitId, out CareUnit careUnit);
@@ -252,13 +250,13 @@ namespace FusionDemo.HealthCentral.Services
                 bed.OccupiedSince = null!;
 
                 using (Computed.Invalidate())
-                    GetAvailableUnits(cancellationToken).Ignore();
+                    await GetAvailableUnits(cancellationToken);
 
 
-                return Task.FromResult(true);
+                return true;
 
             }
-            return Task.FromResult(false);
+            return false;
 
         }
 

@@ -1,10 +1,41 @@
-    <Router AppAssembly="@typeof(Program).Assembly">
-        <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
-        </Found>
-        <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
+@using Stl.OS
+@using System.Reflection;
+@implements IDisposable
+@inject BlazorCircuitContext BlazorCircuitContext
+@inject IJSRuntime JS
+<CascadingValue Name="IsPrerendering" Value="@_isPrerendering">
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+</CascadingValue>
+
+@code {
+    private bool _isPrerendering;
+    [Parameter]
+    public string SessionId { get; set; } = Session.Default.Id;
+
+    protected override void OnInitialized()
+    {
+        var jsRuntimeType = JS.GetType();
+        if (jsRuntimeType.Name != "RemoteJSRuntime")
+        {
+            _isPrerendering = false;
+            return;
+        }
+        var fClientProxy = jsRuntimeType.GetField("_clientProxy", BindingFlags.Instance | BindingFlags.NonPublic);
+        var clientProxy = fClientProxy?.GetValue(JS);
+        _isPrerendering = fClientProxy != null && clientProxy == null;
+        if (!BlazorCircuitContext.IsPrerendering)
+            BlazorCircuitContext.RootComponent = this;
+    }
+
+    public void Dispose() =>
+        BlazorCircuitContext.Dispose();
+}
